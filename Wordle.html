@@ -13,12 +13,13 @@
 
 
 <button id="backBtn" class="back-btn">BACK</button>
-<button id="nextBtn">NEXT</button>
+
 <img src="MenuButton.png" id="pauseBtn">
 
 <div class="top-ui">
     <div class="ui-box">WORD GUESS<br><span id="levelText">1</span></div>
     <div class="ui-box">TIME<br><span id="timerText">60</span></div>
+    <button id="nextBtn">NEXT</button>
 </div>
 
 <div class="form-wrapper">
@@ -274,9 +275,10 @@ function startGame(){
     const hintDiv = document.getElementById("hint");
     if(hintDiv) hintDiv.remove();
     const hintNew = document.createElement("div");
-    hintNew.id="hint"; hintNew.style.color="#b59f3b"; hintNew.style.margin="10px";
+    hintNew.id="hint"; hintNew.style.color="Yellow"; hintNew.style.margin="10px";    hintNew.style.background="black"; hintNew.style.padding="5px";
     hintNew.textContent = "Hint: " + secret.hint;
     document.body.insertBefore(hintNew, board);
+    updateCategoryHintSize();
 
     for(let r=0;r<6;r++){
         const row = document.createElement("div");
@@ -295,6 +297,7 @@ function startGame(){
     levelCompleted=false;
     startTimer();
 }
+window.addEventListener("resize", updateCategoryHintSize);
 
 function startTimer(){
     clearInterval(timer);
@@ -310,6 +313,37 @@ function startTimer(){
             }
         }
     }, 1000);
+}
+
+function updateCategoryHintSize() {
+    const width = window.innerWidth;
+
+    const category = document.getElementById("category");
+    const hint = document.getElementById("hint");
+
+    if (!category || !hint) return;
+
+    if (width > 1024) {       
+        category.style.fontSize = "18px";
+        hint.style.fontSize = "16px";
+        category.style.margin = "10px 0";
+        hint.style.margin = "8px 0";
+    } else if (width <= 1024 && width > 768) {  
+        category.style.fontSize = "16px";
+        hint.style.fontSize = "14px";
+        category.style.margin = "8px 0";
+        hint.style.margin = "6px 0";
+    } else if (width <= 768 && width > 480) {   
+        category.style.fontSize = "14px";
+        hint.style.fontSize = "12px";
+        category.style.margin = "6px 0";
+        hint.style.margin = "4px 0";
+    } else {                                      
+        category.style.fontSize = "11px";
+        hint.style.fontSize = "9px";
+        category.style.margin = "4px 0";
+        hint.style.margin = "2px 0";
+    }
 }
 
 function updateTiles(){

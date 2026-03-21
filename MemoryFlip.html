@@ -153,7 +153,7 @@ typeSelect.addEventListener("change", () => {
     if (typeSelect.value === "yes") {
         gradeSelect.style.display = "block";
         strandSelect.style.display = "block";
-        strandSelect.innerHTML = '<option value="">STRAND/TRACK</option>'; // reset
+        strandSelect.innerHTML = '<option value="">STRAND/TRACK</option>';
     } else {
         gradeSelect.style.display = "none";
         strandSelect.style.display = "none";
@@ -348,7 +348,7 @@ function startTimer(){
 }
 
 function showResult(text){
-    const totalTime = Math.floor((Date.now()-startTime - pausedTimeAccum)/1000); // subtract paused duration
+    const totalTime = Math.floor((Date.now()-startTime - pausedTimeAccum)/1000);
     resultTitle.innerText = text;
     finalTime.innerText = totalTime;
     finalLevel.innerText = level;

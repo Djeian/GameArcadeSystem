@@ -32,28 +32,12 @@ body {
 }
 
 #nextBtn{
-    position:fixed;
-    top:20px;
-    right:440px;
-    padding:10px 20px;
-    border:3px solid #ffcc00;
-    background:#1a030a;
-    color:#ffcc00;
-    font-family:'Press Start 2P', cursive;
-    font-size:12px;
-    cursor:pointer;
-    z-index:60;
     display:none;
-    box-shadow:4px 4px 0 #000;
-}
-
-#nextBtn:hover{
-    background:#d18c01;
-    transform:translate(-1px,-1px);
-}
-
-#nextBtn:active{
-    transform:translate(1px,1px);
+    cursor:pointer;
+    padding:10px 15px;
+    background:#ffcc00;
+    border:3px solid #000;
+    font-family:'Press Start 2P', cursive;
 }
 
 .back-btn {
@@ -125,7 +109,7 @@ body {
     display:grid;
     grid-template-rows:repeat(6,70px);
     gap:8px;
-    margin-top:50px;
+    margin-top:30px;
 }
 
 .row{
@@ -294,4 +278,174 @@ body {
     opacity:0.8;
     text-shadow:2px 2px #000;
     pointer-events:none;
+}
+@media (max-width: 1024px){
+
+    .form-wrapper{
+        flex-direction:column;
+        align-items:center;
+        gap:15px;
+        padding:20px;
+    }
+
+
+    .ui-box{
+        padding:8px 40px;
+        font-size:10px;
+    }
+
+    .instruction-panel,
+    .form-panel{
+        width:90%;
+    }
+
+    #pauseBtn{
+        width: 50px;
+    }
+
+    .pause-panel,
+    .result-panel{
+        transform:scale(0.9);
+    }
+}
+
+@media (max-width: 768px){
+
+    body{
+        overflow-y:auto;
+    }
+
+    .top-ui{
+        top:10px;
+        left:50%;
+        transform:translateX(-50%);
+        gap:8px;
+        font-size:10px;
+    }
+
+    .ui-box{
+        padding:9px 10px;
+        font-size:10px;
+        margin-top: 10px;   
+    }
+
+    #nextBtn{
+        padding:7px 8px;
+        font-size:10px;
+    }
+
+    .form-wrapper{
+        flex-direction:column;
+        gap:15px;
+        padding:10px;
+    }
+
+    .instruction-panel{
+        font-size:9px;
+        line-height:1.5;
+    }
+
+    .form-panel input,
+    .form-panel select{
+        font-size:10px;
+        padding:8px;
+    }
+
+    .start-img{
+        width:120px;
+    }
+
+    #pauseBtn{
+        width: 50px;
+    }
+
+    .pause-btn{
+        width:50px;
+        top:10px;
+        right:10px;
+    }
+
+    .back-btn{
+        top:21px;
+        left:10px;
+        font-size:10px;
+        padding:14px 12px;
+    }
+
+    .pause-panel,
+    .result-panel{
+        transform:scale(0.8);
+    }
+
+    .copyright{
+        font-size:6px;
+        text-align:center;
+        padding:10px;
+    }
+}
+
+@media (max-width: 480px){
+
+    .instruction-panel{
+        font-size:9px;
+    }
+
+    .form-panel input,
+    .form-panel select{
+        font-size:9px;
+        padding:6px;
+    }
+
+    .start-img{
+        width:100px;
+    }
+
+    .pause-btn{
+        width:50px;
+        top:10px;
+        right:10px;
+    }
+
+    #pauseBtn{
+        width: 50px;
+    }
+
+    .pause-panel,
+    .result-panel{
+        transform:scale(0.8);
+    }
+
+    #nextBtn{
+        padding:7px 8px;
+        font-size:10px;
+        position: relative;
+        top: 5px;
+    }
+
+    .result-buttons img,
+    .pause-btn-img{
+        width:90px;
+        position: relative;
+        bottom: 30px;
+    }
+
+    .continue-btn{
+        width:180px;
+        position: relative;
+        top: 260px;
+    }
+
+    .ui-box{
+        font-size:9px;
+        padding:11px 10px;
+        margin-top: 10px;
+    }
+    .result-info{
+        font-size: 14px;
+        position: relative;
+        top: 160px;
+    }
+    .copyright{
+        font-size: 6px;
+    }
 }

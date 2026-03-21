@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skill Issue Arcade - Snake</title>
+<link rel="icon" type="image/png" href="Logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+body {
+    margin:0;
+    height:100vh;
+    background:#111 url('GameMainBackground.png') center/cover no-repeat;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    font-family:'Press Start 2P', cursive;
+    overflow:hidden;
+    color:#fff;
+}
+
+.top-ui{
+    position:fixed;
+    top:20px;
+    left:50%;
+    transform:translateX(-50%);
+    display:flex;
+    gap:20px;
+    z-index:50;
+}
+
+.ui-box{
+    background:#1a030adb;
+    border:3px solid #ffcc00;
+    padding:10px 100px;
+    color:#ffcc00;
+    font-size:15px;
+    box-shadow:4px 4px 0 #000;
+    text-align:center;
+}
+
+#nextBtn{
+    position:fixed;
+    top:20px;
+    right:465px;
+    padding:10px 20px;
+    border:3px solid #ffcc00;
+    background:#1a030a;
+    color:#ffcc00;
+    font-family:'Press Start 2P', cursive;
+    font-size:12px;
+    cursor:pointer;
+    z-index:60;
+    display:none;
+    box-shadow:4px 4px 0 #000;
+}
+
+#nextBtn:hover{
+    background:#d18c01;
+    transform:translate(-1px,-1px);
+}
+
+#nextBtn:active{
+    transform:translate(1px,1px);
+}
+
+.back-btn {
+    position:fixed;
+    top:20px;
+    left:20px;
+    padding:10px 15px;
+    border:3px solid #ffcc00;
+    background:#1a030a;
+    color:#ffcc00;
+    font-family:'Press Start 2P', cursive;
+    font-size:14px;
+    cursor:pointer;
+    z-index:110;
+    display:block;
+    box-shadow:4px 4px 0 #000;
+    text-align:center;
+}
+
+.back-btn:hover{
+    background:#d18c01;
+    transform:translate(-1px, -1px);
+}
+
+.back-btn:active{
+    transform:translate(1px, 1px);
+}
+
+#pauseBtn{
+    position:fixed;
+    top:20px;
+    right:20px;
+    width:60px;
+    cursor:pointer;
+    image-rendering:pixelated;
+    z-index:60;
+    display:none;
+}
+
+.form-panel{
+    position:relative;
+    background:#1a030aba;
+    border:4px solid #ffcc00;
+    padding:20px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    color:#fff;
+    min-width:250px;
+}
+
+.form-panel input,
+.form-panel select{
+    padding:5px 10px;
+    padding-right: 100px;
+    font-size:15px;
+    font-family:'Press Start 2P', cursive;
+}
+
+.start-img{
+    width:180px;
+    cursor:pointer;
+    image-rendering:pixelated;
+    align-self:center;
+    margin-top:10px;
+}
+
+.pause-overlay{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.7);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:300;
+    display:none;
+}
+
+.pause-panel{
+    position:relative;
+    width:600px;
+    height:400px;
+    background:url('PauseBackground.png') center/contain no-repeat;
+    image-rendering:pixelated;
+}
+
+.pause-buttons{
+    position:absolute;
+    bottom:120px;
+    left:50%;
+    transform:translateX(-50%);
+    display:flex;
+    gap:20px;
+}
+
+.pause-btn-img{
+    width:120px;
+    cursor:pointer;
+    image-rendering:pixelated;
+}
+
+.continue-btn{
+    position:absolute;
+    bottom:25px;
+    left:50%;
+    transform:translateX(-50%);
+    width:240px;
+    cursor:pointer;
+    image-rendering:pixelated;
+}
+
+.result-overlay{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.7);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:400;
+    display:none;
+}
+
+.result-panel{
+    position:relative;
+    width:600px;
+    height:400px;
+    background:url('LoseBackground.png') center/contain no-repeat;
+    image-rendering:pixelated;
+}
+
+.result-info{
+    position:absolute;
+    top:150px;
+    width:100%;
+    text-align:center;
+    color:#ffcc00;
+    font-size:16px;
+}
+
+.result-buttons{
+    position:absolute;
+    bottom:50px;
+    left:50%;
+    transform:translateX(-50%);
+    display:flex;
+    gap:15px;
+}
+
+.result-btn-img{
+    width:100px; 
+    cursor:pointer;
+    image-rendering:pixelated;
+}
+
+#resultSettings{
+    width:100px;
+    cursor:pointer;
+    image-rendering:pixelated;
+}
+
+.form-wrapper{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    display:flex;
+    gap:20px;
+    align-items:flex-start;
+    z-index:100;
+}
+
+.instruction-panel{
+    background:#1a030aba;
+    border:4px solid #ffcc00;
+    padding:20px;
+    width:300px;
+    color:#ffcc00;
+    font-size:10px;
+    line-height:1.6;
+    box-shadow:4px 4px 0 #000;
+}
+
+.snake-wrap{
+    display:none;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+}
+
+.snake-canvas{
+    width:min(92vw,520px);
+    aspect-ratio:1/1;
+    border-radius:5px;
+    outline:2px solid #FFD700;
+    background:#0d1117;
+}
+
+.copyright{
+    position:fixed;
+    bottom:10px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:7px;
+    color:#ffcc00;
+    opacity:0.8;
+    text-shadow:2px 2px #000;
+    pointer-events:none;
+}
+</style>
+</head>
+<body>
+
+<button id="backBtn" class="back-btn">BACK</button>
+<button id="nextBtn">NEXT</button>
+<img src="MenuButton.png" id="pauseBtn">
+
+<div class="top-ui">
+    <div class="ui-box">LEVEL<br><span id="levelText">1</span></div>
+    <div class="ui-box">TIME<br><span id="timerText">60</span></div>
+</div>
+
+<div class="form-wrapper">
+
+    <div class="instruction-panel">
+    <b>HOW TO PLAY</b><br><br>
+
+    • Control the snake using WASD or Arrow Keys.<br>
+    • Eat the food to grow longer.<br>
+    • Avoid hitting walls, obstacles, or yourself.<br>
+    • Each level has 60 seconds.<br><br>
+
+    <b>GAME RULES</b><br><br>
+
+    • Snake grows when eating food.<br>
+    • Hitting walls or your body = Game Over.<br>
+    • Random walls appear every level.<br>
+    • Walls increase as levels go higher.<br><br>
+
+    <b>GOAL</b><br><br>
+
+    • Reach the required snake length.<br>
+    • Each level unlocks NEXT when completed.<br>
+    • Finish all levels to WIN.<br>
+</div>
+
+    <div class="form-panel" id="formPanel">
+        <input type="text" placeholder="FIRST NAME" id="fname">
+        <input type="text" placeholder="LAST NAME" id="lname">
+        <input type="text" placeholder="NUMBER (optional)" id="number">
+
+        <select id="type">
+            <option value="">ARE YOU STUDENT?</option>
+            <option value="yes">YES</option>
+            <option value="no">NO</option>
+        </select>
+
+        <select id="grade" style="display:none;">
+            <option value="">GRADE LEVEL</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="COLLEGE">COLLEGE</option>
+        </select>
+
+        <select id="strand" style="display:none;">
+            <option value="">STRAND/TRACK</option>
+        </select>
+
+        <img src="Start.png" id="startBtn" class="start-img">
+    </div>
+
+</div>
+
+<div class="snake-wrap" id="snakeWrap">
+    <canvas id="snakeCanvas" class="snake-canvas" tabindex="0"></canvas>
+</div>
+
+<div class="pause-overlay" id="pauseOverlay">
+    <div class="pause-panel">
+        <div class="pause-buttons">
+            <img src="Restart.png" id="restartGameBtn" class="pause-btn-img">
+            <img src="HomeButton.png" id="restartBtn" class="pause-btn-img">
+            <img src="Settings2.png" id="exitBtn" class="pause-btn-img">
+        </div>
+        <img src="Continue.png" id="continueBtn" class="continue-btn">
+    </div>
+</div>
+
+<div class="result-overlay" id="resultOverlay">
+    <div class="result-panel" id="resultPanel">
+        <div class="result-info">
+            <div id="resultTitle">YOU WIN</div><br>
+            <div id="finalWord">CONGRATULATIONS!</div>
+        </div>
+        <div class="result-buttons">
+            <img src="Restart.png" id="resultRestart" class="result-btn-img">
+            <img src="HomeButton.png" id="resultHome" class="result-btn-img">
+            <img src="Settings2.png" id="resultSettings" class="result-btn-img">
+        </div>
+    </div>
+</div>
+
+<div class="copyright">
+    © 2026 Skill Issue Arcade. All Rights Reserved.
+</div>
+
+<script>
+const formPanel = document.getElementById("formPanel");
+const startBtn = document.getElementById("startBtn");
+const backBtn = document.getElementById("backBtn");
+const typeSelect = document.getElementById("type");
+const gradeSelect = document.getElementById("grade");
+const strandSelect = document.getElementById("strand");
+
+const pauseBtn = document.getElementById("pauseBtn");
+const pauseOverlay = document.getElementById("pauseOverlay");
+const continueBtn = document.getElementById("continueBtn");
+const restartGameBtn = document.getElementById("restartGameBtn");
+const restartBtn = document.getElementById("restartBtn");
+const exitBtn = document.getElementById("exitBtn");
+
+const resultOverlay = document.getElementById("resultOverlay");
+const resultTitle = document.getElementById("resultTitle");
+const finalWord = document.getElementById("finalWord");
+const resultRestart = document.getElementById("resultRestart");
+const resultHome = document.getElementById("resultHome");
+const resultSettings = document.getElementById("resultSettings");
+
+const snakeWrap = document.getElementById("snakeWrap");
+const snakeCanvas = document.getElementById("snakeCanvas");
+const ctx = snakeCanvas.getContext("2d");
+
+const timerText = document.getElementById("timerText");
+const levelText = document.getElementById("levelText");
+const nextBtn = document.getElementById("nextBtn");
+const formWrapper = document.querySelector(".form-wrapper");
+
+let level = 1, maxLevel = 3;
+let isPaused = false, timeLeft = 60, tickInterval, timerInterval;
+let snake, dir, nextDir, food, gameOver, tickMs;
+
+const LEVEL_SPEED = [200, 140, 90]; // level 1,2,3
+
+// NAVIGATION
+backBtn.onclick = ()=> window.location.href="Home.html";
+
+nextBtn.onclick = ()=> {
+    if(level >= maxLevel){
+        nextBtn.style.display="none";
+        showResult("YOU WIN","Completed all levels!");
+        return;
+    }
+    level++;
+    levelText.innerText = level;
+    nextBtn.style.display="none";
+    startSnakeLevel();
+};
+
+// FORM dynamic
+typeSelect.addEventListener("change", () => {
+    if(typeSelect.value==="yes"){
+        gradeSelect.style.display="block";
+        strandSelect.style.display="block";
+        strandSelect.innerHTML='<option value="">STRAND/TRACK</option>';
+    } else {
+        gradeSelect.style.display="none";
+        strandSelect.style.display="none";
+        gradeSelect.value="";
+        strandSelect.value="";
+    }
+});
+
+gradeSelect.addEventListener("change", () => {
+    const grade = gradeSelect.value;
+    let options='<option value="">STRAND/TRACK</option>';
+    if(grade==="11" || grade==="12"){
+        options+='<option value="ABM">ABM</option><option value="MAWD">MAWD</option><option value="DIGAR">DIGAR</option><option value="STEM">STEM</option><option value="CUART">CUART</option>';
+    } else if(grade==="COLLEGE"){
+        options+='<option value="BSIT">BSIT</option><option value="BSCpE">BSCpE</option><option value="BSBA">BSBA</option><option value="BSAIS">BSAIS</option><option value="BSA">BSA</option><option value="BSCM">BSCM</option><option value="BSTM">BSTM</option><option value="HRS">HRS</option>';
+    }
+    strandSelect.innerHTML=options;
+});
+
+
+// START BUTTON
+startBtn.onclick = ()=>{
+    const fname=document.getElementById("fname").value.trim();
+    const lname=document.getElementById("lname").value.trim();
+    const type=typeSelect.value;
+    const grade=gradeSelect.value;
+    const strand=strandSelect.value;
+    if(!fname || !lname || !type){ alert("Fill required fields!"); return; }
+    if(type==="yes" && (!grade || !strand)){ alert("Select grade and strand!"); return; }
+
+    formWrapper.style.display="none";
+    backBtn.style.display="none";
+    pauseBtn.style.display="block";
+    startBtn.style.display = "none";
+
+    startSnakeLevel();
+};
+
+// PAUSE
+pauseBtn.onclick = () => {
+    if (isPaused) return;
+    isPaused = true;
+    clearInterval(tickInterval);
+    clearInterval(timerInterval); // pause countdown
+    pauseOverlay.style.display = "flex";
+};
+
+continueBtn.onclick = () => {
+    if (!isPaused) return;
+    isPaused = false;
+    pauseOverlay.style.display = "none";
+    tickInterval = setInterval(step, tickMs);
+};
+
+
+// RESET
+restartGameBtn.onclick = ()=> location.reload();
+restartBtn.onclick = ()=> window.location.href="Home.html";
+exitBtn.onclick = ()=> alert("Settings coming soon!");
+
+resultRestart.onclick = ()=> location.reload();
+resultHome.onclick = ()=> window.location.href="Home.html";
+resultSettings.onclick = ()=> alert("Settings coming soon!");
+
+// SNAKE GAME FUNCTIONS
+const GRID = 20;
+const START_LEN = 4;
+
+const size = Math.min(snakeCanvas.clientWidth, snakeCanvas.clientHeight);
+snakeCanvas.width = snakeCanvas.height = size;
+
+function startSnakeLevel(){
+    timeLeft = 60; // reset time every level
+    timerText.innerText = timeLeft;
+    snakeWrap.style.display="flex";  // show the snake
+    snakeCanvas.focus();              // <-- focus canvas for keyboard control
+    initSnake();                      // initialize snake
+    tickMs = LEVEL_SPEED[level-1];    // set speed for current level
+    walls = generateRandomWalls(level * 5);
+    clearInterval(tickInterval);      // just in case
+    tickInterval = setInterval(step, tickMs); // auto start
+    startTimer();
+}
+
+function initSnake(){
+    const mid = Math.floor(GRID/2);
+    snake = [];
+    for(let i=START_LEN-1;i>=0;i--) snake.push({x:mid-i,y:mid});
+    dir={x:1,y:0};
+    nextDir={...dir};
+    spawnFood();
+    gameOver=false;
+    drawSnake();
+}
+
+function spawnFood(){
+    let x,y,ok;
+    do{
+        ok=true;
+        x=Math.floor(Math.random()*GRID);
+        y=Math.floor(Math.random()*GRID);
+        if(snake.some(s => s.x === x && s.y === y)) ok = false;
+        if(walls.some(w => w.x === x && w.y === y)) ok = false;
+    }while(!ok);
+    food={x,y};
+}
+
+let walls = []; // global or per-level
+function generateRandomWalls(numWalls) {
+    let wallList = [];
+    const mid = Math.floor(GRID / 2);
+    const startSnakeDir = {x: 1, y: 0}; // snake initially moving right
+    const snakeStartPositions = [];
+
+    // Snake starting body positions
+    for (let i = START_LEN - 1; i >= 0; i--) {
+        snakeStartPositions.push({x: mid - i, y: mid});
+    }
+
+    // Position directly in front of the head
+    const headFront = {x: mid + 1, y: mid};
+
+    while (wallList.length < numWalls) {
+        let x = Math.floor(Math.random() * GRID);
+        let y = Math.floor(Math.random() * GRID);
+
+        // Avoid snake start body and front of head
+        if (snakeStartPositions.some(s => s.x === x && s.y === y)) continue;
+        if (x === headFront.x && y === headFront.y) continue;
+
+        // Avoid duplicates
+        if (wallList.some(w => w.x === x && w.y === y)) continue;
+
+        wallList.push({x, y});
+    }
+    return wallList;
+}
+
+function startTimer(){
+    clearInterval(timerInterval);
+
+    timerInterval = setInterval(() => {
+        if (isPaused || gameOver) return;
+
+        timeLeft--;
+        timerText.innerText = timeLeft;
+
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            endLevel(false, "Time's up!");
+        }
+    }, 1000);
+}
+
+function drawSnake(){
+    const size = Math.min(snakeCanvas.clientWidth,snakeCanvas.clientHeight);
+    snakeCanvas.width = snakeCanvas.height = size;
+    const c = size/GRID;
+
+    // draw background
+    ctx.fillStyle="#0d1117";
+    ctx.fillRect(0,0,size,size);
+
+    // draw walls
+    // draw walls
+ctx.fillStyle = "#FFD700"; // gold walls
+walls.forEach(w => ctx.fillRect(w.x*c, w.y*c, c, c));
+
+    // draw food
+    ctx.fillStyle="#FF0000";
+    ctx.beginPath();
+    ctx.arc(food.x*c+c/2,food.y*c+c/2,c*0.35,0,Math.PI*2);
+    ctx.fill();
+
+    // draw snake as blocks
+    ctx.fillStyle="#00ff00";
+    snake.forEach((s,i)=>{
+        ctx.fillRect(s.x*c,s.y*c,c,c);
+    });
+}
+
+function showResult(title, message){
+    resultOverlay.style.display = "flex";
+    resultTitle.innerText = title;
+    finalWord.innerText = message;
+}
+
+function endLevel(win, customMessage) {
+    clearInterval(tickInterval);
+    clearInterval(timerInterval);
+    gameOver = true;
+
+    if (win || snake.length >= LEVEL_TARGET_LENGTH[level-1]) {
+        if (level < maxLevel) {
+            nextBtn.style.display = "block";
+        } else {
+            showResult("YOU WIN", `Completed all levels in ${60 - timeLeft}s!`);
+        }
+    } else {
+        showResult("YOU LOSE", customMessage || `Level ${level} failed with ${timeLeft}s left`);
+    }
+}
+
+// SNAKE CONTROL
+document.addEventListener("keydown", e => {
+    if (gameOver || isPaused) return;
+
+    switch(e.key.toLowerCase()) {
+        case "w":
+        case "arrowup":
+            if(dir.y !== 1) nextDir = {x:0, y:-1};
+            break;
+        case "s":
+        case "arrowdown":
+            if(dir.y !== -1) nextDir = {x:0, y:1};
+            break;
+        case "a":
+        case "arrowleft":
+            if(dir.x !== 1) nextDir = {x:-1, y:0};
+            break;
+        case "d":
+        case "arrowright":
+            if(dir.x !== -1) nextDir = {x:1, y:0};
+            break;
+    }
+});
+
+const LEVEL_TARGET_LENGTH = [8, 12, 16]; // target lengths per level
+walls = generateRandomWalls(NUM_WALLS_PER_LEVEL[level-1]);
+const numWalls = 5 + (level - 1) * 3;
+function step(){
+    if(gameOver || isPaused) return;
+
+    dir = nextDir;
+    const head = snake[snake.length-1];
+    const newHead = {x: head.x + dir.x, y: head.y + dir.y};
+
+    // wall collision
+    // wall collision
+if(newHead.x < 0 || newHead.x >= GRID || newHead.y < 0 || newHead.y >= GRID){
+    return endLevel(false);
+}
+
+// random wall collision
+if(walls.some(w => w.x === newHead.x && w.y === newHead.y)){
+    return endLevel(false); // hit a wall → lose
+}
+
+    // self collision
+    if(snake.some(s => s.x === newHead.x && s.y === newHead.y)){
+        return endLevel(false); // lose
+    }
+
+    snake.push(newHead);
+
+    // grow when eating
+    if(newHead.x === food.x && newHead.y === food.y){
+        spawnFood();
+    } else {
+        snake.shift();
+    }
+
+    drawSnake();
+
+    // check level completion
+    if(snake.length >= LEVEL_TARGET_LENGTH[level-1]){
+        gameOver = true;          
+        clearInterval(tickInterval); // stop the game loop
+
+        if(level < maxLevel){
+            nextBtn.style.display = "block"; // show next button
+        } else {
+            // last level → show win overlay
+            showResult("YOU WIN", "Completed all levels!");
+        }
+    }
+}
+</script>
+
+</body>
+</html>

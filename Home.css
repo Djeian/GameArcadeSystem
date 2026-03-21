@@ -146,3 +146,25 @@
         .game1 { }
         .game2 { }
         .game3 { }
+
+        @media (max-width: 1046px){
+            .game3{
+                display: none;
+            }
+            .clickable-img{
+                margin-top: 100px;
+            }
+        }
+        @media (max-width: 768px){
+            .game3{
+                display: none;
+            }
+            .clickable-img{
+                margin-top: 0px;
+            }
+        }
+        @media (max-width: 480px){
+            .game3{
+                display: none;
+            }
+        }
