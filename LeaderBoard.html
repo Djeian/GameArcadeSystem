@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skill Issue Arcade - Leaderboard</title>
+<link rel="icon" type="image/png" href="Logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+    body {
+    margin: 0;
+    min-height: 100vh; 
+    font-family: 'Press Start 2P', cursive;
+    background: url('GameMainBackground.png') center/cover no-repeat;
+    color: #fff;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 80px 20px 20px; 
+}
+
+
+#backBtn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+
+    align-self: flex-start;
+    padding: 10px 15px;
+    border: 3px solid #ffcc00;
+    background: #1a030a;
+    color: #ffcc00;
+    font-family:'Press Start 2P', cursive;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 4px 4px 0 #000;
+}
+
+#backbtn:hover{
+    background:#d18c01;
+    transform:translate(-1px, -1px);
+}
+
+#backbtn:active{
+    transform:translate(1px, 1px);
+}
+
+
+h1 {
+    color: #ffcc00;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+
+#gameButtons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+
+.gameBtn {
+    padding: 10px 15px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 10px;
+    background: #222;
+    color: #ffcc00;
+    border: 2px solid #ffcc00;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.gameBtn:hover {
+    background: #ffcc00;
+    color: #000;
+}
+
+
+.gameBtn.active {
+    background: #ffcc00;
+    color: #000;
+}
+
+
+table {
+    width: 100%;
+    max-width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 2px solid #fff;
+    padding: 8px;
+    text-align: center;
+    font-size: 10px;
+}
+
+th {
+    background-color: #222;
+    color: #ffcc00;
+}
+
+tr:nth-child(even) {
+    background:#1a030aba;
+}
+
+tr{
+    background:#1a030aba;
+}
+
+.table-container {
+    width: 100%;
+    max-width: 2000px;
+    max-height: 400px; 
+    overflow-y: auto;
+}
+
+@media(max-width:768px){
+    th, td {
+        font-size: 8px;
+        padding: 6px;
+    }
+}
+</style>
+</head>
+<body>
+
+<h1>LEADERBOARD</h1>
+<button id="backBtn" onclick="window.location.href='Home.html'">BACK</button>
+<div id="gameButtons" style="margin-bottom: 10px;">
+    <button class="gameBtn" data-game="MemoryGame">MemoryGame</button>
+    <button class="gameBtn" data-game="Wordle">Wordle</button>
+    <button class="gameBtn" data-game="Snake">SnakeGame</button>
+</div>
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>FIRST NAME</th>
+                <th>LAST NAME</th>
+                <th>NUMBER</th>
+                <th>STUDENT?</th>
+                <th>GRADE</th>
+                <th>STRAND/TRACK</th>
+                <th>GAME</th>
+                <th>TIME (s)</th>
+                <th>LEVEL</th>
+                <th>SCORE</th>
+            </tr>
+        </thead>
+        <tbody id="leaderboardBody">
+            <tr><td colspan="11">Loading...</td></tr>
+        </tbody>
+    </table>
+<</div>
+<script>
+const gameButtons = document.querySelectorAll(".gameBtn");
+let currentGame = "MemoryGame";
+
+gameButtons.forEach(btn => {
+    btn.onclick = () => {
+        currentGame = btn.dataset.game;
+        loadLeaderboard(currentGame);
+
+        gameButtons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+    };
+});
+
+function loadLeaderboard(game = currentGame) {
+    leaderboardBody.innerHTML = '<tr><td colspan="9">Loading...</td></tr>';
+    
+    fetch('get_scores.php')
+    .then(res => res.json())
+    .then(data => {
+        if(!data || data.length === 0){
+            leaderboardBody.innerHTML = '<tr><td colspan="9">No scores yet</td></tr>';
+            return;
+        }
+
+        
+        const filtered = data.filter(row => row.game === game);
+
+        filtered.sort((a, b) => {
+    if (b.score !== a.score) {
+        return b.score - a.score;
+    }
+
+    return (a.time_played || 9999) - (b.time_played || 9999);
+});
+
+        leaderboardBody.innerHTML = "";
+        filtered.forEach((row, index)=>{
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${index+1}</td>
+                <td>${row.fname}</td>
+                <td>${row.lname}</td>
+                <td>${row.number || '-'}</td>
+                <td>${row.type}</td>
+                <td>${row.grade || '-'}</td>
+                <td>${row.strand || '-'}</td>
+                <td>${row.game}</td>
+                <td>${row.time_played || '-'}</td>
+                <td>${row.level}</td>
+                <td>${row.score}</td>
+            `;
+            leaderboardBody.appendChild(tr);
+        });
+    })
+    .catch(err=>{
+        console.error(err);
+        leaderboardBody.innerHTML = '<tr><td colspan="9">Failed to load leaderboard</td></tr>';
+    });
+}
+
+loadLeaderboard(currentGame);
+</script>
+
+</body>
+</html>

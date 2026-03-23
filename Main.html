@@ -10,7 +10,7 @@
 </head>
 
 <body>
-
+<img src="Gif1.gif" id="topDecor" class="top-decor">
 <div class="loading-bg" id="bg">
 
     <div class="tap-text" id="tap">
@@ -43,12 +43,14 @@ const loading = document.getElementById("loading");
 
 document.body.addEventListener("click", () => {
 
+    document.getElementById("topDecor").style.display = "block";
     tap.style.display = "none";
     loading.style.display = "flex";
 
 });
 document.body.addEventListener("click", () => {
 
+document.getElementById("topDecor").style.display = "block";
 tap.style.display = "none";
 loading.style.display = "flex";
 

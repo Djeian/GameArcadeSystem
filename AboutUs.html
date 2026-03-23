@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skill Issue Arcade - About Us</title>
+<link rel="icon" type="image/png" href="Logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+<style>
+body {
+    margin: 0;
+    height: 100vh;
+    font-family: 'Press Start 2P', cursive;
+    background: url('GameMainBackground.png') center/cover no-repeat;
+    color: #fff;
+    overflow: hidden;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#backBtn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    padding: 10px 15px;
+    border: 3px solid #ffcc00;
+    background: #1a030a;
+    color: #ffcc00;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 4px 4px 0 #000;
+    font-family: 'Press Start 2P', cursive;
+}
+
+#backBtn:hover{
+    background:#d18c01;
+    transform:translate(-1px, -1px);
+}
+
+#backBtn:active{
+    transform:translate(1px, 1px);
+}
+
+h1 {
+    color: #ffcc00;
+    margin-bottom: 20px;
+}
+
+.about-wrapper {
+    width: 95%;
+    max-width: 1400px;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.box {
+    background: #1a030aba;
+    border: 3px solid #fff;
+    box-shadow: 6px 6px 0 #000;
+    padding: 20px;
+}
+
+.text {
+    font-size: 10px;
+    line-height: 1.6;
+}
+
+.section-title {
+    color: #ffcc00;
+    margin-bottom: 10px;
+}
+
+.member {
+    border: 2px solid #fff;
+    padding: 10px;
+    background: #00000066;
+    text-align: center;
+    margin-top: 10px;
+}
+
+@media(max-width:900px){
+    .about-wrapper {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<button id="backBtn" onclick="window.location.href='Home.html'">BACK</button>
+
+<h1>ABOUT US</h1>
+
+<div class="about-wrapper">
+
+    <div class="box">
+        <div class="section-title">🎮 WHAT IS THIS?</div>
+        <div class="text">
+            Skill Issue Arcade is a mini-game platform designed for students who want to relax, 
+            enjoy, and compete in a simple and fun way. It combines different types of games that test memory, 
+            speed, and reaction without requiring downloads or high-end devices.
+        </div>
+
+        <br>
+
+        <div class="section-title">🔥 WHY WE MADE THIS</div>
+        <div class="text">
+            This project was created to explore if a simple arcade website can actually be fun, useful, 
+            and engaging for students. It focuses on enjoyment and accessibility instead of pressure, 
+            making it a stress-free environment for everyone.
+        </div>
+
+        <br>
+
+        <div class="section-title">💡 OUR GOAL</div>
+        <div class="text">
+            Our goal is to create a smooth and enjoyable arcade experience where players can improve 
+            their skills, compete with others, and have fun anytime.
+        </div>
+    </div>
+
+    <div class="box">
+        <div class="section-title">🕹️ WHAT YOU CAN DO</div>
+        <div class="text">
+            • Play mini-games like Memory, Wordle, and Snake<br>
+            • Compete and climb the leaderboard (You Must Pay)<br>
+            • Improve reaction time and memory<br>
+            • Challenge friends and beat their scores<br>
+            • Enjoy a clean and simple arcade system
+        </div>
+
+        <br>
+
+        <div class="section-title">⚡ WHAT MAKES IT DIFFERENT</div>
+        <div class="text">
+            The platform is designed to be lightweight, fast, and easy to use. It works on most devices 
+            and focuses on smooth gameplay and fair competition. Everything is built to be simple but fun.
+        </div>
+
+        <br>
+
+        <div class="section-title">👾 DEVELOPERS</div>
+        <div class="member">IndianCoders</div>
+    </div>
+
+</div>
+
+</body>
+</html>

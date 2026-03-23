@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="Wordle.css">
 </head>
-
+    
 <body>
 
 
@@ -47,7 +47,7 @@
     <div class="form-panel" id="formPanel">
         <input type="text" placeholder="FIRST NAME" id="fname">
         <input type="text" placeholder="LAST NAME" id="lname">
-        <input type="text" placeholder="NUMBER (optional)" id="number">
+        <input type="text" placeholder="NUMBER (Tournament)" id="number">
 
         <select id="type">
             <option value="">ARE YOU STUDENT?</option>
@@ -88,6 +88,8 @@
             <div id="resultTitle">YOU WIN</div><br>
             <div>WORD: <span id="finalWord"></span></div>
         </div>
+        <img src="WinLeft.png" id="leftDecor" class="side-decor">
+        <img src="WinRight.png" id="rightDecor" class="side-decor">
         <div class="result-buttons">
             <img src="Restart.png" id="resultRestart" class="result-btn-img">
             <img src="HomeButton.png" id="resultHome" class="result-btn-img">
@@ -96,10 +98,13 @@
     </div>
 </div>
 
+
 <div class="board" id="board"></div>
 <div class="copyright">
     © 2026 Skill Issue Arcade. All Rights Reserved.
 </div>
+<audio class="sound" id="winMusic" src="LOWCORTISOL.mp3" preload="auto"></audio>
+<audio class="sound" id="loseMusic" src="HIGHCORTISOL.mp3" preload="auto"></audio>
 <script>
 const formPanel = document.getElementById("formPanel");
 const startBtn = document.getElementById("startBtn");
@@ -128,6 +133,11 @@ const timerText = document.getElementById("timerText");
 const levelText = document.getElementById("levelText");
 const nextBtn = document.getElementById("nextBtn");
 const formWrapper = document.querySelector(".form-wrapper");
+const leftDecor = document.getElementById("leftDecor");
+const rightDecor = document.getElementById("rightDecor");
+const winMusic = document.getElementById("winMusic");
+const loseMusic = document.getElementById("loseMusic");
+
 
 let secretWord="", currentRow=0, currentGuess="";
 let isPaused=false, timer, timeLeft=60, startTime=0, pausedTimeAccum=0, pauseStart=0;
@@ -195,7 +205,75 @@ const words = [
     {word:"SHOES", category:"Clothing", hint:"Worn on feet"},
     {word:"RIZAL", category:"Culture", hint:"Famous Filipino national hero"},
     {word:"MUSIC", category:"Entertainment", hint:"Art of organized sound"},
-    {word:"CANDY", category:"Food", hint:"Sweet treat for kids"}
+    {word:"CANDY", category:"Food", hint:"Sweet treat for kids"},
+    {word:"LAMP", category:"Furniture", hint:"Used to brighten a room"},
+    {word:"CLOCK", category:"Time", hint:"Shows hours and minutes"},
+    {word:"PHONE", category:"Technology", hint:"Used to call or message people"},
+    {word:"BANANA", category:"Fruit", hint:"Long yellow fruit, monkeys love it"},
+    {word:"TABLE", category:"Furniture", hint:"Flat surface to eat or work on"},
+    {word:"CHAIR", category:"Furniture", hint:"You sit on it"},
+    {word:"PENCIL", category:"Stationery", hint:"Used for writing or drawing"},
+    {word:"ROBOT", category:"Technology", hint:"Can perform tasks automatically"},
+    {word:"SWORD", category:"Weapon", hint:"Used in battles in medieval times"},
+    {word:"HEART", category:"Body", hint:"Pumps blood through your body"},
+    {word:"RIVER", category:"Nature", hint:"Flowing water across land"},
+    {word:"MONEY", category:"Finance", hint:"Used to buy things"},
+    {word:"BREAD", category:"Food", hint:"Common staple made from flour"},
+    {word:"PLANT", category:"Nature", hint:"Grows from soil and sunlight"},
+    {word:"GLASS", category:"Material", hint:"Transparent, used in windows"},
+    {word:"SHIRT", category:"Clothing", hint:"Worn on the upper body"},
+    {word:"BOOKS", category:"Education", hint:"Contains written pages to read"},
+    {word:"PAINT", category:"Art", hint:"Used to create colorful pictures"},
+    {word:"CLOUD", category:"Nature", hint:"White fluffy thing in the sky"},
+    {word:"CROWN", category:"Royalty", hint:"Worn by kings and queens"},
+    {word:"DRINK", category:"Food", hint:"Something you sip"},
+    {word:"BRUSH", category:"Art", hint:"Used to paint or clean"},
+    {word:"FROST", category:"Weather", hint:"Thin layer of ice on surfaces"},
+    {word:"GLOVE", category:"Clothing", hint:"Worn on hands"},
+    {word:"SHARK", category:"Animal", hint:"Dangerous predator in the sea"},
+    {word:"JUICE", category:"Food", hint:"Liquid from fruits or vegetables"},
+    {word:"PEARL", category:"Nature", hint:"Found inside an oyster"},
+    {word:"PLUGS", category:"Technology", hint:"Connects devices to electricity"},
+    {word:"DRUMS", category:"Music", hint:"Percussion instrument you hit"},
+    {word:"SNAKE", category:"Animal", hint:"Slithering reptile"},
+    {word:"BERRY", category:"Food", hint:"Small juicy fruit"},
+    {word:"BLOCK", category:"Building", hint:"Used to make structures"},
+    {word:"GRASS", category:"Nature", hint:"Covers the ground outdoors"},
+    {word:"PIZZA", category:"Food", hint:"Round flatbread with toppings"},
+    {word:"WHEEL", category:"Transport", hint:"Used to move vehicles"},
+    {word:"ROSES", category:"Nature", hint:"Popular fragrant flowers"},
+    {word:"LEMON", category:"Fruit", hint:"Sour yellow citrus fruit"},
+    {word:"TIGER", category:"Animal", hint:"Big striped cat in the wild"},
+    {word:"WATCH", category:"Time", hint:"Worn on the wrist"},
+    {word:"COOKS", category:"Profession", hint:"People who prepare food"},
+    {word:"SPICE", category:"Food", hint:"Adds flavor to meals"},
+    {word:"MOUNT", category:"Geography", hint:"Large elevated landform"},
+    {word:"SHEET", category:"Stationery", hint:"A single page of paper"},
+    {word:"FISHY", category:"Animal", hint:"Lives in water"},
+    {word:"DRIVE", category:"Transport", hint:"Act of operating a vehicle"},
+    {word:"SHINE", category:"Action", hint:"To give off light"},
+    {word:"FLOUR", category:"Food", hint:"Powder used for baking"},
+    {word:"CANDY", category:"Food", hint:"Sweet treat for kids"},
+    {word:"CAMPY", category:"Activity", hint:"Fun outdoors adventure"},
+    {word:"BREAD", category:"Food", hint:"Common staple made from flour"},
+    {word:"LEAFY", category:"Nature", hint:"Full of green leaves"},
+    {word:"FLAME", category:"Nature", hint:"Hot burning gas and light"},
+    {word:"PASTA", category:"Food", hint:"Italian noodle dish"},
+    {word:"COUCH", category:"Furniture", hint:"Used for sitting or lying"},
+    {word:"PRIDE", category:"Emotion", hint:"Feeling of self-respect"},
+    {word:"SPOON", category:"Utensil", hint:"Used to eat liquids"},
+    {word:"BRAVE", category:"Emotion", hint:"Not afraid to face danger"},
+    {word:"TRUCK", category:"Transport", hint:"Vehicle for carrying goods"},
+    {word:"CANDY", category:"Food", hint:"Sweet treat for kids"},
+    {word:"BEACH", category:"Nature", hint:"Sandy area by the sea"},
+    {word:"MOUSE", category:"Animal", hint:"Small rodent often in houses"},
+    {word:"CLEAN", category:"Action", hint:"To remove dirt or mess"},
+    {word:"TRAIN", category:"Transport", hint:"Runs on tracks"},
+    {word:"GAMER", category:"Entertainment", hint:"Someone who plays video games"},
+    {word:"CHAOS", category:"Concept", hint:"Complete disorder or confusion"},
+    {word:"LIGHT", category:"Physics", hint:"Can brighten a room"},
+    {word:"BRICK", category:"Building", hint:"Used to make walls"},
+    {word:"WINDY", category:"Weather", hint:"Characterized by strong air movement"}
 ];
 
 //START
@@ -238,7 +316,7 @@ continueBtn.onclick = ()=> {
 
 restartGameBtn.onclick = ()=> location.reload();
 restartBtn.onclick = ()=> window.location.href="Home.html";
-exitBtn.onclick = ()=> alert("Settings coming soon!");
+exitBtn.onclick = ()=> window.location.href="AboutUs.html";
 
 //WORDLE GAME FUNCTIONS
 document.addEventListener("keydown", e=>{
@@ -408,13 +486,44 @@ nextBtn.onclick = ()=>{
 //RESULT
 function showResult(text, data, isWin){
     resultTitle.innerText = text;
-    if(isWin){
+
+    let endTime = Date.now();
+    let timePlayed = Math.floor((endTime - startTime - pausedTimeAccum) / 1000); 
+
+    saveScore("Wordle", level, isWin ? correctWordsCount : 0, timePlayed);
+
+    if(isWin && winMusic){
+        resultPanel.style.background = "url('WinBackground.png') center/contain no-repeat";
         finalWord.previousSibling.textContent = "GUESS WORDS: ";
         finalWord.innerText = data;
+        leftDecor.src = "WinGIF.gif";
+        rightDecor.src = "WinGIF.gif";
+        if(loseMusic && !loseMusic.paused){
+            loseMusic.pause();
+            loseMusic.currentTime = 0;
+        }
+        if(winMusic){
+            winMusic.currentTime = 0;
+            winMusic.play().catch(err => console.log("Could not play music:", err));
+        }   
     } else {
+        resultPanel.style.background = "url('LoseBackground.png') center/contain no-repeat";
         finalWord.previousSibling.textContent = "WORD: ";
         finalWord.innerText = data;
+        leftDecor.src = "LoseGIF.gif";
+        rightDecor.src = "LoseGIF.gif";
+        if(winMusic && !winMusic.paused){
+            winMusic.pause();
+            winMusic.currentTime = 0;
+        }
+        if(loseMusic){
+            loseMusic.currentTime = 0;
+            loseMusic.play().catch(err => console.log(err));
+        }
     }
+
+    leftDecor.style.display = "block";
+    rightDecor.style.display = "block";
     resultOverlay.style.display = "flex";
 }
 
@@ -433,7 +542,46 @@ function resetBoard(){
 
 resultRestart.onclick = ()=> location.reload();
 resultHome.onclick = ()=> window.location.href="Home.html";
-resultSettings.onclick = ()=> alert("Settings coming soon!");
+resultSettings.onclick = ()=> window.location.href="AboutUs.html";
+
+function applySettings() {
+    const soundEnabled = localStorage.getItem('sound') !== 'off';
+    const musicEnabled = localStorage.getItem('music') !== 'off';
+
+    document.querySelectorAll('.sound').forEach(a => a.muted = !soundEnabled);
+    document.querySelectorAll('.music').forEach(m => m.muted = !musicEnabled);
+}
+
+applySettings();
+
+function saveScore(gameName, level, score, timePlayed=0){
+    const fname = document.getElementById("fname").value;
+    const lname = document.getElementById("lname").value;
+    const number = document.getElementById("number").value;
+    const type = document.getElementById("type").value;
+    const grade = document.getElementById("grade").value;
+    const strand = document.getElementById("strand").value;
+
+    const formData = new FormData();
+    formData.append('fname', fname);
+    formData.append('lname', lname);
+    formData.append('number', number);
+    formData.append('type', type);
+    formData.append('grade', grade);
+    formData.append('strand', strand);
+    formData.append('game', gameName);
+    formData.append('level', level);
+    formData.append('score', score);
+    formData.append('time_played', timePlayed);
+
+    fetch('save_score.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.text())
+    .then(res => console.log(res))
+    .catch(err => console.log(err));
+}
 </script>
 
 </body>

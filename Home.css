@@ -120,8 +120,6 @@
             box-shadow: 4px 4px 0 #000;
         }
 
-        
-
         .back-btn:hover{
             background:#d18c01;
             transform:translate(-1px, -1px);
@@ -143,9 +141,104 @@
             min-height: 80px;
         }
 
-        .game1 { }
-        .game2 { }
-        .game3 { }
+        #settingsModal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 400px;
+            background: #1a030aba;
+            border: 3px solid #ffcc00;
+            padding: 20px;
+            display: none;
+            flex-direction: column;
+            gap: 15px;
+            box-shadow: 6px 6px 0 #000;
+            z-index: 100;
+            font-family: 'Press Start 2P', cursive;
+        }
+
+        #settingsModal h2 {
+            color: #ffcc00;
+            margin: 0 0 10px 0;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        label{
+            color: white;
+        }
+
+        .setting-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .setting-option label {
+            font-size: 10px;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+        .switch input { display:none; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #222;
+            transition: 0.4s;
+            border: 2px solid #ffcc00;
+            border-radius: 20px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 1px;
+            background-color: #ffcc00;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #ffcc00;
+        }
+        input:checked + .slider:before {
+            transform: translateX(20px);
+            background-color: #000;
+        }
+
+        #closeSettings {
+            margin-top: 10px;
+            padding: 10px;
+            border: 2px solid #ffcc00;
+            background: #1a030a;
+            color: #ffcc00;
+            cursor: pointer;
+            text-align: center;
+        }
+        #closeSettings:hover {
+            background: #ffcc00;
+            color: #000;
+            transform: translate(-2px, -2px);
+        }
+
+        .game1 {
+            width: 450px;
+         }
+        .game2 {
+            width: 450px;
+         }
+        .game3 {
+            width: 450px;
+         }
 
         @media (max-width: 1046px){
             .game3{

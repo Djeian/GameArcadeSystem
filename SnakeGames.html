@@ -43,7 +43,7 @@ body {
 #nextBtn{
     position:fixed;
     top:20px;
-    right:465px;
+    right:365px;
     padding:10px 20px;
     border:3px solid #ffcc00;
     background:#1a030a;
@@ -278,6 +278,23 @@ body {
     text-shadow:2px 2px #000;
     pointer-events:none;
 }
+.side-decor {
+    position: fixed;
+    top: 55%;
+    transform: translateY(-50%);
+    width: 200px;
+    z-index: 1;
+    display: none; 
+    pointer-events: none;
+}
+
+#leftDecor {
+    left: 380px;
+}
+
+#rightDecor {
+    right: 380px;
+}
 </style>
 </head>
 <body>
@@ -318,7 +335,7 @@ body {
     <div class="form-panel" id="formPanel">
         <input type="text" placeholder="FIRST NAME" id="fname">
         <input type="text" placeholder="LAST NAME" id="lname">
-        <input type="text" placeholder="NUMBER (optional)" id="number">
+        <input type="text" placeholder="NUMBER (Tournament)" id="number">
 
         <select id="type">
             <option value="">ARE YOU STUDENT?</option>
@@ -363,6 +380,8 @@ body {
             <div id="resultTitle">YOU WIN</div><br>
             <div id="finalWord">CONGRATULATIONS!</div>
         </div>
+        <img src="WinLeft.png" id="leftDecor" class="side-decor">
+        <img src="WinRight.png" id="rightDecor" class="side-decor">
         <div class="result-buttons">
             <img src="Restart.png" id="resultRestart" class="result-btn-img">
             <img src="HomeButton.png" id="resultHome" class="result-btn-img">
@@ -374,7 +393,8 @@ body {
 <div class="copyright">
     © 2026 Skill Issue Arcade. All Rights Reserved.
 </div>
-
+<audio class="sound" id="winMusic" src="LOWCORTISOL.mp3" preload="auto"></audio>
+<audio class="sound" id="loseMusic" src="HIGHCORTISOL.mp3" preload="auto"></audio>
 <script>
 const formPanel = document.getElementById("formPanel");
 const startBtn = document.getElementById("startBtn");
@@ -405,12 +425,16 @@ const timerText = document.getElementById("timerText");
 const levelText = document.getElementById("levelText");
 const nextBtn = document.getElementById("nextBtn");
 const formWrapper = document.querySelector(".form-wrapper");
+const leftDecor = document.getElementById("leftDecor");
+const rightDecor = document.getElementById("rightDecor");
+const winMusic = document.getElementById("winMusic");
+const loseMusic = document.getElementById("loseMusic");
 
 let level = 1, maxLevel = 3;
 let isPaused = false, timeLeft = 60, tickInterval, timerInterval;
 let snake, dir, nextDir, food, gameOver, tickMs;
 
-const LEVEL_SPEED = [200, 140, 90]; // level 1,2,3
+const LEVEL_SPEED = [200, 140, 90];
 
 // NAVIGATION
 backBtn.onclick = ()=> window.location.href="Home.html";
@@ -476,7 +500,7 @@ pauseBtn.onclick = () => {
     if (isPaused) return;
     isPaused = true;
     clearInterval(tickInterval);
-    clearInterval(timerInterval); // pause countdown
+    clearInterval(timerInterval); 
     pauseOverlay.style.display = "flex";
 };
 
@@ -491,11 +515,11 @@ continueBtn.onclick = () => {
 // RESET
 restartGameBtn.onclick = ()=> location.reload();
 restartBtn.onclick = ()=> window.location.href="Home.html";
-exitBtn.onclick = ()=> alert("Settings coming soon!");
+exitBtn.onclick = ()=> window.location.href="AboutUs.html";
 
 resultRestart.onclick = ()=> location.reload();
 resultHome.onclick = ()=> window.location.href="Home.html";
-resultSettings.onclick = ()=> alert("Settings coming soon!");
+resultSettings.onclick = ()=> window.location.href="AboutUs.html";
 
 // SNAKE GAME FUNCTIONS
 const GRID = 20;
@@ -505,15 +529,15 @@ const size = Math.min(snakeCanvas.clientWidth, snakeCanvas.clientHeight);
 snakeCanvas.width = snakeCanvas.height = size;
 
 function startSnakeLevel(){
-    timeLeft = 60; // reset time every level
+    timeLeft = 60;
     timerText.innerText = timeLeft;
-    snakeWrap.style.display="flex";  // show the snake
-    snakeCanvas.focus();              // <-- focus canvas for keyboard control
-    initSnake();                      // initialize snake
-    tickMs = LEVEL_SPEED[level-1];    // set speed for current level
+    snakeWrap.style.display="flex"; 
+    snakeCanvas.focus();              
+    initSnake();                      
+    tickMs = LEVEL_SPEED[level-1];   
     walls = generateRandomWalls(level * 5);
-    clearInterval(tickInterval);      // just in case
-    tickInterval = setInterval(step, tickMs); // auto start
+    clearInterval(tickInterval);      
+    tickInterval = setInterval(step, tickMs); 
     startTimer();
 }
 
@@ -540,30 +564,26 @@ function spawnFood(){
     food={x,y};
 }
 
-let walls = []; // global or per-level
+let walls = [];
 function generateRandomWalls(numWalls) {
     let wallList = [];
     const mid = Math.floor(GRID / 2);
-    const startSnakeDir = {x: 1, y: 0}; // snake initially moving right
+    const startSnakeDir = {x: 1, y: 0};
     const snakeStartPositions = [];
 
-    // Snake starting body positions
     for (let i = START_LEN - 1; i >= 0; i--) {
         snakeStartPositions.push({x: mid - i, y: mid});
     }
 
-    // Position directly in front of the head
     const headFront = {x: mid + 1, y: mid};
 
     while (wallList.length < numWalls) {
         let x = Math.floor(Math.random() * GRID);
         let y = Math.floor(Math.random() * GRID);
 
-        // Avoid snake start body and front of head
         if (snakeStartPositions.some(s => s.x === x && s.y === y)) continue;
         if (x === headFront.x && y === headFront.y) continue;
 
-        // Avoid duplicates
         if (wallList.some(w => w.x === x && w.y === y)) continue;
 
         wallList.push({x, y});
@@ -592,22 +612,21 @@ function drawSnake(){
     snakeCanvas.width = snakeCanvas.height = size;
     const c = size/GRID;
 
-    // draw background
+    // DRAW BACKGROUND
     ctx.fillStyle="#0d1117";
     ctx.fillRect(0,0,size,size);
 
-    // draw walls
-    // draw walls
-ctx.fillStyle = "#FFD700"; // gold walls
+    // DRAW WALLS
+ctx.fillStyle = "#FFD700";
 walls.forEach(w => ctx.fillRect(w.x*c, w.y*c, c, c));
 
-    // draw food
+    // FOOD
     ctx.fillStyle="#FF0000";
     ctx.beginPath();
     ctx.arc(food.x*c+c/2,food.y*c+c/2,c*0.35,0,Math.PI*2);
     ctx.fill();
 
-    // draw snake as blocks
+    // SNAKE AS BLOCKS
     ctx.fillStyle="#00ff00";
     snake.forEach((s,i)=>{
         ctx.fillRect(s.x*c,s.y*c,c,c);
@@ -625,15 +644,43 @@ function endLevel(win, customMessage) {
     clearInterval(timerInterval);
     gameOver = true;
 
+    let scoreToSave = snake.length;
+
     if (win || snake.length >= LEVEL_TARGET_LENGTH[level-1]) {
         if (level < maxLevel) {
             nextBtn.style.display = "block";
         } else {
             showResult("YOU WIN", `Completed all levels in ${60 - timeLeft}s!`);
+            leftDecor.src = "WinGIF.gif";
+            rightDecor.src = "WinGIF.gif";
+        if(loseMusic && !loseMusic.paused){
+            loseMusic.pause();
+            loseMusic.currentTime = 0;
+        }
+        if(winMusic){
+            winMusic.currentTime = 0; 
+            winMusic.play().catch(err => {
+        console.log("Could not play music:", err);
+        });
+        }
+        saveScore("Snake", level, scoreToSave, timeLeft);
         }
     } else {
         showResult("YOU LOSE", customMessage || `Level ${level} failed with ${timeLeft}s left`);
+        leftDecor.src = "LoseGIF.gif";
+        rightDecor.src = "LoseGIF.gif";
+        if(winMusic && !winMusic.paused){
+            winMusic.pause();
+            winMusic.currentTime = 0;
+        }
+        if(loseMusic){
+            loseMusic.currentTime = 0;
+            loseMusic.play().catch(err => console.log(err));
+        }
+        saveScore("Snake", level, scoreToSave,timeLeft);
     }
+    leftDecor.style.display = "block";
+    rightDecor.style.display = "block";
 }
 
 // SNAKE CONTROL
@@ -660,7 +707,7 @@ document.addEventListener("keydown", e => {
     }
 });
 
-const LEVEL_TARGET_LENGTH = [8, 12, 16]; // target lengths per level
+const LEVEL_TARGET_LENGTH = [8, 12, 16];
 walls = generateRandomWalls(NUM_WALLS_PER_LEVEL[level-1]);
 const numWalls = 5 + (level - 1) * 3;
 function step(){
@@ -670,25 +717,25 @@ function step(){
     const head = snake[snake.length-1];
     const newHead = {x: head.x + dir.x, y: head.y + dir.y};
 
-    // wall collision
-    // wall collision
+
+    // WALL COLLISIONNN
 if(newHead.x < 0 || newHead.x >= GRID || newHead.y < 0 || newHead.y >= GRID){
     return endLevel(false);
 }
 
-// random wall collision
+  // RANDOM WALL COLLISIONNN
 if(walls.some(w => w.x === newHead.x && w.y === newHead.y)){
-    return endLevel(false); // hit a wall → lose
+    return endLevel(false);
 }
 
-    // self collision
+    // SELF COLLISION
     if(snake.some(s => s.x === newHead.x && s.y === newHead.y)){
-        return endLevel(false); // lose
+        return endLevel(false); 
     }
 
     snake.push(newHead);
 
-    // grow when eating
+    // GROW WHEEN EAT
     if(newHead.x === food.x && newHead.y === food.y){
         spawnFood();
     } else {
@@ -697,18 +744,57 @@ if(walls.some(w => w.x === newHead.x && w.y === newHead.y)){
 
     drawSnake();
 
-    // check level completion
+    
     if(snake.length >= LEVEL_TARGET_LENGTH[level-1]){
         gameOver = true;          
-        clearInterval(tickInterval); // stop the game loop
+        clearInterval(tickInterval); 
 
         if(level < maxLevel){
-            nextBtn.style.display = "block"; // show next button
+            nextBtn.style.display = "block"; 
         } else {
-            // last level → show win overlay
+            
             showResult("YOU WIN", "Completed all levels!");
         }
     }
+}
+
+function applySettings() {
+    const soundEnabled = localStorage.getItem('sound') !== 'off';
+    const musicEnabled = localStorage.getItem('music') !== 'off';
+
+    document.querySelectorAll('.sound').forEach(a => a.muted = !soundEnabled);
+    document.querySelectorAll('.music').forEach(m => m.muted = !musicEnabled);
+}
+
+applySettings();
+
+function saveScore(gameName, level, score, timePlayed=0){
+    const fname = document.getElementById("fname").value;
+    const lname = document.getElementById("lname").value;
+    const number = document.getElementById("number").value;
+    const type = document.getElementById("type").value;
+    const grade = document.getElementById("grade").value;
+    const strand = document.getElementById("strand").value;
+
+    const formData = new FormData();
+    formData.append('fname', fname);
+    formData.append('lname', lname);
+    formData.append('number', number);
+    formData.append('type', type);
+    formData.append('grade', grade);
+    formData.append('strand', strand);
+    formData.append('game', gameName);
+    formData.append('level', level);
+    formData.append('score', score);
+    formData.append('time_played', timePlayed);
+
+    fetch('save_score.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.text())
+    .then(res => console.log(res))
+    .catch(err => console.log(err));
 }
 </script>
 

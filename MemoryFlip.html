@@ -44,7 +44,7 @@
     <div class="form-panel" id="formPanel">
         <input type="text" placeholder="FIRST NAME" id="fname">
         <input type="text" placeholder="LAST NAME" id="lname">
-        <input type="text" placeholder="NUMBER (optional)" id="number">
+        <input type="text" placeholder="NUMBER (Tournament)" id="number">
 
         <select id="type">
             <option value="">ARE YOU STUDENT?</option>
@@ -86,10 +86,11 @@
 
         <div class="result-info">
             <div id="resultTitle">YOU WIN</div><br>
-            <div>TIME: <span id="finalTime"></span>s</div>
+            <div>TIME USED: <span id="finalTime"></span>s</div>
             <div>LEVEL: <span id="finalLevel"></span></div>
         </div>
-
+        <img src="WinLeft.png" id="leftDecor" class="side-decor">
+        <img src="WinRight.png" id="rightDecor" class="side-decor">
         <div class="result-buttons">
             <img src="Restart.png" id="resultRestart" class="result-btn-img">
             <img src="HomeButton.png" id="resultHome" class="result-btn-img">
@@ -103,6 +104,8 @@
 <div class="copyright">
     © 2026 Skill Issue Arcade. All Rights Reserved.
 </div>
+<audio id="winMusic" src="LOWCORTISOL.mp3" preload="auto"></audio>
+<audio id="loseMusic" src="HIGHCORTISOL.mp3" preload="auto"></audio>
 <script>
 const gameBoard = document.getElementById('gameBoard');
 const levelText = document.getElementById('levelText');
@@ -130,6 +133,10 @@ const resultRestart = document.getElementById('resultRestart');
 const resultHome = document.getElementById('resultHome');
 const resultSettings = document.getElementById('resultSettings');
 const formWrapper = document.querySelector(".form-wrapper");
+const leftDecor = document.getElementById("leftDecor");
+const rightDecor = document.getElementById("rightDecor");
+const winMusic = document.getElementById("winMusic");
+const loseMusic = document.getElementById("loseMusic");
 
 let level=1, pairs=2, timeLeft=30, timer;
 let firstCard=null, secondCard=null, lockBoard=false, matches=0;
@@ -232,11 +239,11 @@ continueBtn.onclick = ()=> {
 
 restartGameBtn.onclick = ()=> resetGame();
 restartBtn.onclick = ()=> window.location.href="Home.html";
-exitBtn.onclick = ()=> alert("Settings soon");
+exitBtn.onclick = ()=> window.location.href="AboutUs.html";
 
 resultRestart.onclick = ()=> resetGame();
 resultHome.onclick = ()=> window.location.href="Home.html";
-resultSettings.onclick = ()=> alert("Settings soon");
+resultSettings.onclick = ()=> window.location.href="AboutUs.html";
 
 nextBtn.onclick = ()=>{ nextBtn.style.display="none"; startRound(); };
 
@@ -262,7 +269,8 @@ function generateBoard() {
         'Pair2.png', 
         'Pair3.png', 
         'Pair4.png', 
-        'Pair5.png', 
+        'Pair5.png',
+        'Pair6.png'
     ];
 
     let arr = [];
@@ -316,7 +324,7 @@ function generateBoard() {
                     nextBtn.style.display = "block";
                     level++;
                     pairs++;
-                    timeLeft += 25;
+                    timeLeft += 10;
                     updateUI();
                 }
             } else {
@@ -352,39 +360,66 @@ function showResult(text){
     resultTitle.innerText = text;
     finalTime.innerText = totalTime;
     finalLevel.innerText = level;
+    let endTime = Date.now();
+    let timePlayed = Math.floor((endTime - startTime - pausedTimeAccum) / 1000);
 
     if(text === "YOU WIN"){
         resultPanel.style.background = "url('WinBackground.png') center/contain no-repeat";
+        leftDecor.src = "WinGIF.gif";
+        rightDecor.src = "WinGIF.gif";
+        if(loseMusic && !loseMusic.paused){
+            loseMusic.pause();
+            loseMusic.currentTime = 0;
+        }
+        if(winMusic){
+            winMusic.currentTime = 0;
+            winMusic.play().catch(err => {
+        console.log("Could not play music:", err);
+        });
+        }
+        saveScore("MemoryGame", level, matches, timePlayed); 
+
     } else {
         resultPanel.style.background = "url('LoseBackground.png') center/contain no-repeat";
-    }
+        leftDecor.src = "LoseGIF.gif";
+        rightDecor.src = "LoseGIF.gif";
+        if(winMusic && !winMusic.paused){
+            winMusic.pause();
+            winMusic.currentTime = 0;
+        }
+        if(loseMusic){
+            loseMusic.currentTime = 0;
+            loseMusic.play().catch(err => console.log(err));
+        }
+        saveScore("MemoryGame", level, 0, timePlayed);
 
+    }
+    leftDecor.style.display = "block";
+    rightDecor.style.display = "block";
     resultOverlay.style.display="flex";
 }
 
 function resetGame(){
-    // Hide overlays
     resultOverlay.style.display="none";
     pauseOverlay.style.display="none"; 
     nextBtn.style.display="none"; 
 
-    // Reset game state
+    // RESET GAME STATE
     level = 1;
     pairs = 2;
     timeLeft = 30;
 
-    // Reset pause variables
+    // RESET PAUSE VARIABLES
     isPaused = false;
     pauseStart = 0;
     pausedTimeAccum = 0;
 
-    // Reset card tracking
+    // RESET CARD TRACKING
     firstCard = null;
     secondCard = null;
     lockBoard = false;
     matches = 0;
 
-    // Reset UI
     updateUI();
     formWrapper.style.display = "flex";
     toggleBackButton(); 
@@ -395,6 +430,45 @@ function resetGame(){
 function updateUI(){
     levelText.innerText=level;
     timerText.innerText=timeLeft;
+}
+
+function applySettings() {
+    const soundEnabled = localStorage.getItem('sound') !== 'off';
+    const musicEnabled = localStorage.getItem('music') !== 'off';
+
+    document.querySelectorAll('.sound').forEach(a => a.muted = !soundEnabled);
+    document.querySelectorAll('.music').forEach(m => m.muted = !musicEnabled);
+}
+
+applySettings();
+
+function saveScore(gameName, level, score, timePlayed=0){
+    const fname = document.getElementById("fname").value;
+    const lname = document.getElementById("lname").value;
+    const number = document.getElementById("number").value;
+    const type = document.getElementById("type").value;
+    const grade = document.getElementById("grade").value;
+    const strand = document.getElementById("strand").value;
+
+    const formData = new FormData();
+    formData.append('fname', fname);
+    formData.append('lname', lname);
+    formData.append('number', number);
+    formData.append('type', type);
+    formData.append('grade', grade);
+    formData.append('strand', strand);
+    formData.append('game', gameName);
+    formData.append('level', level);
+    formData.append('score', score);
+    formData.append('time_played', timePlayed);
+
+    fetch('save_score.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.text())
+    .then(res => console.log(res))
+    .catch(err => console.log(err));
 }
 </script>
 

@@ -12,37 +12,34 @@
 
 <body>
 
-    <!-- NAVBAR -->
     <nav class="navbar">
         <div class="navbar-img">
             <img src="MenuButton.png" alt="Menu" class="menu-button" id="menuButton">
         </div>
     </nav>
 
-    <!-- GAME CARDS -->
     <div class="image-container">
 
         <div class="image image-con">
             <a href="MemoryFlip.html">
-                <img src="LoadingBackground.png" alt="Game 1" class="clickable-img game1">
+                <img src="MemoryFlipTN.png" alt="Game 1" class="clickable-img game1">
             </a>
         </div>
 
         <div class="image image-con">
             <a href="Wordle.html">
-                <img src="LoadingBackground.png" alt="Game 2" class="clickable-img game2">
+                <img src="WordleTN.png" alt="Game 2" class="clickable-img game2">
             </a>
         </div>
         
         <div class="image image-con">
             <a href="SnakeGames.html">
-                <img src="LoadingBackground.png" alt="Game 3" class="clickable-img game3">
+                <img src="SnakeTN.png" alt="Game 3" class="clickable-img game3">
             </a>         
         </div>
 
     </div>
 
-    <!-- OVERLAY + POPUP -->
     <div class="overlay" id="overlay">
 
         <div class="menu-popup" id="menuPopup" onclick="event.stopPropagation()">
@@ -51,35 +48,67 @@
 
             <img src="MenuPic.png" class="menu-title">
 
-            <img src="Start.png" class="menu-img" onclick="alert('Start Game')">
-            <img src="About.png" class="menu-img" onclick="alert('Settings')">
-            <img src="Settings.png" class="menu-img" onclick="closeMenu()">
+            <img src="LeaderBoard.png" class="menu-img" onclick="window.location.href='LeaderBoard.html'">
+            <img src="About.png" class="menu-img" onclick="window.location.href='AboutUs.html'">
+            <img src="Settings.png" class="menu-img" onclick="openSettings()">
 
         </div>
 
+        <div id="settingsModal">
+    <h2>SETTINGS</h2>
+
+    <div class="setting-option">
+        <label>Sound</label>
+        <label class="switch">
+            <input type="checkbox" id="soundToggle" checked>
+            <span class="slider"></span>
+        </label>
     </div>
 
-    <!-- FOOTER -->
+    <div id="closeSettings">CLOSE</div>
+</div>
+
+    </div>
+
     <div class="copyright">
         © 2026 Skill Issue Arcade. All Rights Reserved.
     </div>
 
     <script>
             const menuButton = document.getElementById('menuButton');
-            const menuPopup = document.getElementById('menuPopup');
-            const overlay = document.getElementById('overlay');
+const menuPopup = document.getElementById('menuPopup');
+const overlay = document.getElementById('overlay');
 
-            menuButton.addEventListener('click', () => {
-                menuPopup.style.display = 'flex';
-                overlay.style.display = 'block';
-            });
+menuButton.addEventListener('click', () => {
+    menuPopup.style.display = 'flex';
+    overlay.style.display = 'block';
+});
 
-            function closeMenu() {
-                menuPopup.style.display = 'none';
-                overlay.style.display = 'none';
-            }
+function closeMenu() {
+    menuPopup.style.display = 'none';
+    overlay.style.display = 'none';
+}
 
-            overlay.addEventListener('click', closeMenu);
+function openSettings() {
+    document.getElementById('settingsModal').style.display = 'flex';
+    document.body.classList.add('modal-open');
+}
+
+document.getElementById('closeSettings').onclick = () => {
+    document.getElementById('settingsModal').style.display = 'none';
+    document.body.classList.remove('modal-open');
+}
+
+const soundToggle = document.getElementById('soundToggle');
+
+soundToggle.checked = localStorage.getItem('sound') !== 'off';
+
+soundToggle.onchange = () => {
+    localStorage.setItem('sound', soundToggle.checked ? 'on' : 'off');
+    console.log("Sound is now", soundToggle.checked ? "ON" : "OFF");
+}
+
+overlay.addEventListener('click', closeMenu);
         </script>
 
 </body>

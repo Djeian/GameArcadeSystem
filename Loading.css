@@ -13,6 +13,16 @@ align-items:center;
 flex-direction:column;
 }
 
+.top-decor {
+    position: absolute;
+    bottom: 120px;            
+    left: 37%;
+    transform: translateX(-50%);
+    display: none;
+    width: 50px; 
+    z-index: 100;
+    pointer-events: none;
+}
 
 .tap-text{
 position:absolute;
@@ -46,7 +56,6 @@ pointer-events:none;
 
 .loading-screen{
 display:none;
-
 position:absolute;
 bottom:30px;  
 left:50%;
