@@ -318,6 +318,10 @@
         width:90%;
     }
 
+    .instruction-panel{
+        font-size: 7px;
+    }
+
     #pauseBtn{
         width: 50px;
     }
@@ -377,7 +381,7 @@
     }
 
     .instruction-panel{
-        font-size:9px;
+        font-size:7px;
         line-height:1.5;
     }
 
@@ -430,7 +434,7 @@
 @media (max-width: 480px){
 
     .instruction-panel{
-        font-size:9px;
+        font-size:7px;
     }
 
     .side-decor {

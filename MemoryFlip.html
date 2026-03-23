@@ -197,17 +197,32 @@ gradeSelect.addEventListener("change", () => {
 startBtn.onclick = () => {
     const fname = document.getElementById("fname").value.trim();
     const lname = document.getElementById("lname").value.trim();
+    const number = document.getElementById("number").value.trim();
     const type = typeSelect.value;
     const grade = gradeSelect.value;
     const strand = strandSelect.value;
 
-    if (!fname || !lname || !type) {
-        alert("Please fill all required fields!");
+    if(!fname || !lname || !type){
+        alert("Fill required fields!");
         return;
     }
 
-    if (type === "yes" && (!grade || !strand)) {
-        alert("Please select grade level and strand/track!");
+    if(!/^[A-Za-z\s]{1,50}$/.test(fname)){
+        alert("First name can only contain letters and max 50 characters");
+        return;
+    }
+    if(!/^[A-Za-z\s]{1,50}$/.test(lname)){
+        alert("Last name can only contain letters and max 50 characters");
+        return;
+    }
+
+    if(number && !/^\d{11}$/.test(number)){
+        alert("Number must be exactly 11 digits");
+        return;
+    }
+
+    if(type === "yes" && (!grade || !strand)){
+        alert("Select grade and strand!");
         return;
     }
 
@@ -219,7 +234,27 @@ startBtn.onclick = () => {
     startRound();
 };
 
+const fname = document.getElementById("fname");
+const lname = document.getElementById("lname");
+const number = document.getElementById("number");
+
+// FIRST NAME → letters only
+fname.addEventListener("input", function() {
+    this.value = this.value.replace(/[^A-Za-z ]/g, '');
+});
+
+// LAST NAME → letters only
+lname.addEventListener("input", function() {
+    this.value = this.value.replace(/[^A-Za-z ]/g, '');
+});
+
+// NUMBER → numbers only (max 11)
+number.addEventListener("input", function() {
+    this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11);
+});
+
 toggleBackButton();
+
 
 pauseBtn.onclick = ()=> {
     if(isPaused) return;
