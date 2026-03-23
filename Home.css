@@ -254,6 +254,7 @@
             }
             .clickable-img{
                 margin-top: 0px;
+                width: 380px;
             }
         }
         @media (max-width: 480px){
