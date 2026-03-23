@@ -4,18 +4,19 @@ font-family: monospace;
 }
 
 .loading-bg{
-width:100%;
-height:100vh;
-background-image:url("LoadingBackground1.png");
-display:flex;
-justify-content:center;
-align-items:center;
-flex-direction:column;
+    min-height: 100vh;
+    background-image:url("LoadingBackground1.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.mobile-SIA{
+    display: none;
 }
 
 .top-decor {
     position: absolute;
-    bottom: 120px;            
+    bottom: 115px;            
     left: 37%;
     transform: translateX(-50%);
     display: none;
@@ -25,20 +26,17 @@ flex-direction:column;
 }
 
 .tap-text{
-position:absolute;
-bottom:90px;
-font-size:20px;
-color:#ffd84d;
-font-family: 'Press Start 2P', cursive;
-text-shadow:
-2px 2px 0 #000,
-4px 4px 0 #000;
-
-font-weight:bold;
-letter-spacing:3px;
-
-animation:blink 1.2s infinite;
-cursor:pointer;
+    font-size: clamp(14px, 2vw,20px);
+    color: #ffd84d;
+    font-family: 'Press Start 2P', cursive;
+    text-shadow: 2px 2px 0 #000, 4px 4px 0 #000;
+    font-weight: bold;
+    letter-spacing: 3px;
+    animation:blink 1.2s infinite;
+    cursor: pointer;
+    text-align: center;
+    position: relative;
+    top: 620px;
 }
 
 .copyright{
@@ -70,15 +68,11 @@ text-align:center;
 
 
 .pixel-bar{
-
-width:420px;
-height:34px;
-
+width: clamp(200px, 60vw, 420px);
+height:30px;
 border:4px solid #fec303;
 border-radius:6px;
-
 padding:4px;
-
 }
 
 
@@ -121,6 +115,52 @@ animation:dots 1.2s infinite;
 
 }
 
+@media (max-width: 1046px){
+    .loading-bg{
+        background-image:url("GameMainBackground.png");
+    }
+    .mobile-SIA{
+        display: block;
+        width:100%;
+        height: auto;
+        position: absolute;
+        top: 10px;
+    }
+    .top-decor{
+        position: absolute;
+        bottom: 115px;            
+        left: 30%;
+    }
+}
+@media (max-width: 768px){
+    .mobile-SIA{
+        display: block;
+        width:100%;
+        height: auto;
+        position: absolute;
+        top: 40px;
+    }
+    .top-decor{
+        position: absolute;
+        bottom: 115px;            
+        left: 25%;
+    }
+}
+
+@media (max-width: 480px){
+    .mobile-SIA{
+        display: block;
+        width:100%;
+        height: auto;
+        position: absolute;
+        top: 70px;
+    }
+    .top-decor{
+        position: absolute;
+        bottom: 115px;            
+        left: 25%;
+    }
+}
 
 @keyframes dots{
 
