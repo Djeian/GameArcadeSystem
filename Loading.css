@@ -121,6 +121,7 @@ animation:dots 1.2s infinite;
 
 }
 
+
 @keyframes dots{
 
 0%{content:".";}
