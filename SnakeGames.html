@@ -354,7 +354,7 @@ body {
             <option value="">STRAND/TRACK</option>
         </select>
 
-        <img src="Start.png" id="startBtn" class="start-img">
+        <img src="Start.png" id="startBtn" class="start-img" onclick="alert('The Game Will Start Immediately, Be Ready')">
     </div>
 
 </div>
@@ -509,6 +509,8 @@ startBtn.onclick = () => {
         alert("Select grade and strand!");
         return;
     }
+
+    alert("The Game Will Start immediately, Be Ready");
 
     formWrapper.style.display="none";
     backBtn.style.display="none";

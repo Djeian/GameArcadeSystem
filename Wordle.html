@@ -18,7 +18,7 @@
 
 <div class="top-ui">
     <div class="ui-box">WORD GUESS<br><span id="levelText">1</span></div>
-    <div class="ui-box">TIME<br><span id="timerText">60</span></div>
+    <div class="ui-box">TIME<br><span id="timerText">80</span></div>
     <button id="nextBtn">NEXT</button>
 </div>
 
@@ -28,7 +28,7 @@
         <b>HOW TO PLAY</b><br><br>
         • Guess the 5-letter word.<br>
         • You have 6 tries per level.<br>
-        • Each level has 60 seconds.<br><br>
+        • Each level has 80 seconds.<br><br>
 
         <b>COLORS</b><br><br>
 
@@ -141,7 +141,7 @@ const loseMusic = document.getElementById("loseMusic");
 
 
 let secretWord="", currentRow=0, currentGuess="";
-let isPaused=false, timer, timeLeft=60, startTime=0, pausedTimeAccum=0, pauseStart=0;
+let isPaused=false, timer, timeLeft=80, startTime=0, pausedTimeAccum=0, pauseStart=0;
 let level=1, maxLevel=5;
 let levelCompleted=false;
 
@@ -326,7 +326,7 @@ startBtn.onclick = () => {
     pauseBtn.style.display="block";
     startTime = Date.now();
     pausedTimeAccum = 0;
-    timeLeft = 60;
+    timeLeft = 80;
 
     startGame();
 };
@@ -421,7 +421,7 @@ function startGame(){
 
     currentRow=0;
     currentGuess="";
-    timeLeft=60;
+    timeLeft=80;
     levelCompleted=false;
     startTimer();
 }
@@ -505,7 +505,7 @@ function checkWord(){
         if(level < maxLevel){
             nextBtn.style.display = "block"; 
         } else {
-            showResult("YOU WIN", secretWord, true); // pass only secretWord here
+            showResult("YOU WIN", secretWord, true); 
         }
         return;
     }
@@ -515,7 +515,7 @@ function checkWord(){
     if(currentRow === 6){
         levelCompleted = true;
         clearInterval(timer);
-        showResult("YOU LOSE", secretWord, false); // pass only secretWord here
+        showResult("YOU LOSE", secretWord, false); 
     }
 }
 
@@ -540,10 +540,8 @@ function showResult(text, secret, isWin){
     let endTime = Date.now();
     let timePlayed = Math.floor((endTime - startTime - pausedTimeAccum) / 1000); 
 
-    // Only pass the correctWordsCount as the score
     saveScore("Wordle", level, correctWordsCount, timePlayed);
 
-    // Display secret word in the result overlay
     finalWord.previousSibling.textContent = "SECRET WORD:";
     finalWord.innerText = secret;
 
