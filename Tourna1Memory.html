@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Skill Issue Arcade - Memory Game</title>
+<title>Skill Issue Arcade - Memory Tournament</title>
 <link rel="icon" type="image/png" href="Logo.png">
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="MemoryFlip.css">
+<link rel="stylesheet" href="Tourna1Memory.css">
 </head>
 
 <body>
@@ -16,6 +16,10 @@
 <img src="MenuButton.png" id="pauseBtn" class="pause-btn">
 
 <div class="top-ui">
+    <div class="ui-box">
+        PLAYER<br>
+        <span id="playerTurnText">1</span>
+    </div>
     <div class="ui-box">LEVEL<br><span id="levelText">1</span></div>
     <div class="ui-box">TIME<br><span id="timerText">30</span></div>
     <button id="nextBtn">NEXT</button>
@@ -38,13 +42,30 @@
         <b>TIPS</b><br><br>
 
         • Memorize card positions<br>
-        • Be fast but accurate<br>
+        • Be fast but accurate<br><br>
+
+        <b>2 PLAYER MODE</b><br><br>
+
+        • Player 1 plays first, then Player 2 follows.<br>
+        • Each player has their own score (separate leaderboard tracking).<br>
+        • Scores are NOT combined.<br>
+        • Highest individual score across all levels wins.<br><br>
     </div>
 
     <div class="form-panel" id="formPanel">
+
+    <div class="players-container">
+
+        <!-- PLAYER 1 -->
+        <div class="player-box" id="player1Box">
+
+        <h3>PLAYER 1</h3>
+
         <input type="text" placeholder="FIRST NAME" id="fname">
+
         <input type="text" placeholder="LAST NAME" id="lname">
-        <input type="text" placeholder="NUMBER (OPTIONAL)" id="number">
+
+        <input type="text" placeholder="NUMBER" id="number">
 
         <select id="type">
             <option value="">ARE YOU STUDENT?</option>
@@ -63,8 +84,44 @@
             <option value="">STRAND/TRACK</option>
         </select>
 
-        <img src="Start.png" id="startBtn" class="start-img">
     </div>
+
+
+    <!-- PLAYER 2 -->
+    <div class="player-box" id="player2Fields" style="display:none;">
+
+        <h3>PLAYER 2</h3>
+
+        <input type="text" placeholder="FIRST NAME" id="fname2">
+
+        <input type="text" placeholder="LAST NAME" id="lname2">
+
+        <input type="text" placeholder="NUMBER" id="number2">
+
+        <select id="type2">
+            <option value="">ARE YOU STUDENT?</option>
+            <option value="yes">YES</option>
+            <option value="no">NO</option>
+        </select>
+
+        <select id="grade2" style="display:none;">
+            <option value="">GRADE LEVEL</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="COLLEGE">COLLEGE</option>
+        </select>
+
+        <select id="strand2" style="display:none;">
+            <option value="">STRAND/TRACK</option>
+        </select>
+
+    </div>
+
+</div>
+<div class="start-wrapper">
+    <img src="Start.png" id="startBtn" class="start-img">
+</div>
+</div>
 
 </div>
 
@@ -99,13 +156,18 @@
 
     </div>
 </div>
-
+<div class="turn-overlay" id="turnOverlay">
+    <div class="turn-panel">
+        <div id="turnMessage">PLAYER 2 TURN</div>
+        <div id="turnCountdown">5</div>
+    </div>
+</div>
 <div class="game-board" id="gameBoard"></div>
 <div class="copyright">
     © 2026 Skill Issue Arcade. All Rights Reserved.
 </div>
-<audio id="winMusic" src="LOWCORTISOL.mp3" preload="auto"></audio>
-<audio id="loseMusic" src="HIGHCORTISOL.mp3" preload="auto"></audio>
+<audio class="sound" id="winMusic" src="LOWCORTISOL.mp3" preload="auto"></audio>
+<audio class="sound" id="loseMusic" src="HIGHCORTISOL.mp3" preload="auto"></audio>
 <script>
 const gameBoard = document.getElementById('gameBoard');
 const levelText = document.getElementById('levelText');
@@ -120,7 +182,8 @@ const restartGameBtn = document.getElementById('restartGameBtn');
 const restartBtn = document.getElementById('restartBtn');
 const exitBtn = document.getElementById('exitBtn');
 const continueBtn = document.getElementById('continueBtn');
-
+const params = new URLSearchParams(window.location.search);
+const mode = params.get("mode");
 const backBtn = document.getElementById('backBtn');
 
 const resultOverlay = document.getElementById('resultOverlay');
@@ -137,6 +200,33 @@ const leftDecor = document.getElementById("leftDecor");
 const rightDecor = document.getElementById("rightDecor");
 const winMusic = document.getElementById("winMusic");
 const loseMusic = document.getElementById("loseMusic");
+const turnOverlay = document.getElementById("turnOverlay");
+const turnMessage = document.getElementById("turnMessage");
+const turnCountdown = document.getElementById("turnCountdown");
+const playerTurnText = document.getElementById("playerTurnText");
+
+if(mode === "2"){
+    document.getElementById("player2Fields").style.display = "flex";
+    document.querySelector(".result-info").style.fontSize = "12px";
+} else {
+    document.getElementById("player1Box").classList.add("single-player");
+}
+
+let currentPlayer = 1;
+
+let playerResults = {
+    player1: {
+        level: 0,
+        time: 0,
+        win: false
+    },
+
+    player2: {
+        level: 0,
+        time: 0,
+        win: false
+    }
+};
 
 let level=1, pairs=2, timeLeft=30, timer;
 let firstCard=null, secondCard=null, lockBoard=false, matches=0;
@@ -150,7 +240,7 @@ function toggleBackButton(){
     backBtn.style.display = formPanel.style.display === "flex" || formPanel.style.display === "" ? "block" : "none";
 }
 
-backBtn.onclick = ()=> window.location.href = "Home.html";
+backBtn.onclick = ()=> window.location.href = "Tournament.html";
 
 const typeSelect = document.getElementById("type");
 const gradeSelect = document.getElementById("grade");
@@ -167,6 +257,60 @@ typeSelect.addEventListener("change", () => {
         gradeSelect.value = "";
         strandSelect.value = "";
     }
+});
+
+const typeSelect2 = document.getElementById("type2");
+const gradeSelect2 = document.getElementById("grade2");
+const strandSelect2 = document.getElementById("strand2");
+
+typeSelect2.addEventListener("change", () => {
+
+    if(typeSelect2.value === "yes"){
+
+        gradeSelect2.style.display = "block";
+        strandSelect2.style.display = "block";
+
+        strandSelect2.innerHTML =
+        '<option value="">STRAND/TRACK</option>';
+
+    } else {
+
+        gradeSelect2.style.display = "none";
+        strandSelect2.style.display = "none";
+
+        gradeSelect2.value = "";
+        strandSelect2.value = "";
+    }
+});
+
+gradeSelect2.addEventListener("change", () => {
+
+    const grade = gradeSelect2.value;
+
+    let options =
+    '<option value="">STRAND/TRACK</option>';
+
+    if(grade === "11" || grade === "12"){
+
+        options += '<option value="ABM">ABM</option>';
+        options += '<option value="MAWD">MAWD</option>';
+        options += '<option value="DIGAR">DIGAR</option>';
+        options += '<option value="STEM">STEM</option>';
+        options += '<option value="CUART">CUART</option>';
+
+    } else if(grade === "COLLEGE"){
+
+        options += '<option value="BSIT">BSIT</option>';
+        options += '<option value="BSCpE">BSCpE</option>';
+        options += '<option value="BSBA">BSBA</option>';
+        options += '<option value="BSAIS">BSAIS</option>';
+        options += '<option value="BSA">BSA</option>';
+        options += '<option value="BSCM">BSCM</option>';
+        options += '<option value="BSTM">BSTM</option>';
+        options += '<option value="HRS">HRS</option>';
+    }
+
+    strandSelect2.innerHTML = options;
 });
 
 gradeSelect.addEventListener("change", () => {
@@ -216,7 +360,12 @@ startBtn.onclick = () => {
         return;
     }
 
-    if(number && !/^\d{11}$/.test(number)){
+    if (!number) {
+        alert("Please enter your number!");
+        return;
+    }
+
+    if (!/^\d{11}$/.test(number)) {
         alert("Number must be exactly 11 digits");
         return;
     }
@@ -225,6 +374,52 @@ startBtn.onclick = () => {
         alert("Select grade and strand!");
         return;
     }
+
+    if(mode === "2"){
+
+    const fname2 = document.getElementById("fname2").value.trim();
+    const lname2 = document.getElementById("lname2").value.trim();
+    const number2 = document.getElementById("number2").value.trim();
+
+    const type2 = typeSelect2.value;
+    const grade2 = gradeSelect2.value;
+    const strand2 = strandSelect2.value;
+
+    // REQUIRED FIELDS
+    if(!fname2 || !lname2 || !type2){
+        alert("Player 2: Fill required fields!");
+        return;
+    }
+
+    // LETTERS ONLY
+    if(!/^[A-Za-z\s]{1,50}$/.test(fname2)){
+        alert("Player 2 first name can only contain letters and max 50 characters");
+        return;
+    }
+
+    if(!/^[A-Za-z\s]{1,50}$/.test(lname2)){
+        alert("Player 2 last name can only contain letters and max 50 characters");
+        return;
+    }
+
+    // NUMBER REQUIRED
+    if(!number2){
+        alert("Player 2: Please enter your number!");
+        return;
+    }
+
+    // EXACTLY 11 DIGITS
+    if(!/^\d{11}$/.test(number2)){
+        alert("Player 2 number must be exactly 11 digits");
+        return;
+    }
+
+    // STUDENT VALIDATION
+    if(type2 === "yes" && (!grade2 || !strand2)){
+        alert("Player 2: Select grade and strand!");
+        return;
+    }
+}
 
     formWrapper.style.display = "none"; 
     backBtn.style.display = "none";
@@ -238,6 +433,10 @@ const fname = document.getElementById("fname");
 const lname = document.getElementById("lname");
 const number = document.getElementById("number");
 
+const fname2 = document.getElementById("fname2");
+const lname2 = document.getElementById("lname2");
+const number2 = document.getElementById("number2");
+
 // FIRST NAME → letters only
 fname.addEventListener("input", function() {
     this.value = this.value.replace(/[^A-Za-z ]/g, '');
@@ -250,6 +449,21 @@ lname.addEventListener("input", function() {
 
 // NUMBER → numbers only (max 11)
 number.addEventListener("input", function() {
+    this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11);
+});
+
+// PLAYER 2 FIRST NAME → letters only
+fname2.addEventListener("input", function() {
+    this.value = this.value.replace(/[^A-Za-z ]/g, '');
+});
+
+// PLAYER 2 LAST NAME → letters only
+lname2.addEventListener("input", function() {
+    this.value = this.value.replace(/[^A-Za-z ]/g, '');
+});
+
+// PLAYER 2 NUMBER → numbers only (max 11)
+number2.addEventListener("input", function() {
     this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11);
 });
 
@@ -273,11 +487,11 @@ continueBtn.onclick = ()=> {
 };
 
 restartGameBtn.onclick = ()=> resetGame();
-restartBtn.onclick = ()=> window.location.href="Home.html";
+restartBtn.onclick = ()=> window.location.href="Tournament.html";
 exitBtn.onclick = ()=> window.location.href="AboutUs.html";
 
 resultRestart.onclick = ()=> resetGame();
-resultHome.onclick = ()=> window.location.href="Home.html";
+resultHome.onclick = ()=> window.location.href="Tournament.html";
 resultSettings.onclick = ()=> window.location.href="AboutUs.html";
 
 nextBtn.onclick = ()=>{ nextBtn.style.display="none"; startRound(); };
@@ -391,47 +605,142 @@ function startTimer(){
 }
 
 function showResult(text){
-    const totalTime = Math.floor((Date.now()-startTime - pausedTimeAccum)/1000);
-    resultTitle.innerText = text;
-    finalTime.innerText = totalTime;
-    finalLevel.innerText = level;
-    let endTime = Date.now();
-    let timePlayed = Math.floor((endTime - startTime - pausedTimeAccum) / 1000);
 
-    if(text === "YOU WIN"){
-        resultPanel.style.background = "url('WinBackground.png') center/contain no-repeat";
-        leftDecor.src = "WinGIF.gif";
-        rightDecor.src = "WinGIF.gif";
-        if(loseMusic && !loseMusic.paused){
-            loseMusic.pause();
-            loseMusic.currentTime = 0;
-        }
-        if(winMusic){
-            winMusic.currentTime = 0;
-            winMusic.play().catch(err => {
-        console.log("Could not play music:", err);
-        });
-        }
-        saveScore("MemoryGame", level, matches, timePlayed); 
+    clearInterval(timer);
+
+    let endTime = Date.now();
+
+    let timePlayed =
+    Math.floor(
+        (endTime - startTime - pausedTimeAccum) / 1000
+    );
+
+    
+    if(currentPlayer === 1){
+
+        playerResults.player1.level = level;
+        playerResults.player1.time = timePlayed;
+        playerResults.player1.win = text === "YOU WIN";
 
     } else {
-        resultPanel.style.background = "url('LoseBackground.png') center/contain no-repeat";
-        leftDecor.src = "LoseGIF.gif";
-        rightDecor.src = "LoseGIF.gif";
-        if(winMusic && !winMusic.paused){
-            winMusic.pause();
-            winMusic.currentTime = 0;
-        }
-        if(loseMusic){
-            loseMusic.currentTime = 0;
-            loseMusic.play().catch(err => console.log(err));
-        }
-        saveScore("MemoryGame", level, 0, timePlayed);
 
+        playerResults.player2.level = level;
+        playerResults.player2.time = timePlayed;
+        playerResults.player2.win = text === "YOU WIN";
     }
-    leftDecor.style.display = "block";
-    rightDecor.style.display = "block";
-    resultOverlay.style.display="flex";
+
+    if(mode === "2" && currentPlayer === 1){
+
+        currentPlayer = 2;
+
+        playerTurnText.innerText = "2";
+
+        resetForNextPlayer();
+
+
+        showPlayerTurnScreen();
+
+        return;
+    }
+
+    // FINAL RESULT
+    let winnerText = "";
+
+    const p1 = playerResults.player1;
+    const p2 = playerResults.player2;
+
+    if(mode === "2"){
+
+        if(p1.level > p2.level){
+
+            winnerText = "PLAYER 1 WINS";
+
+        } else if(p2.level > p1.level){
+
+            winnerText = "PLAYER 2 WINS";
+
+        }
+
+        else {
+
+            if(p1.time < p2.time){
+
+                winnerText = "PLAYER 1 WINS";
+
+            } else if(p2.time < p1.time){
+
+                winnerText = "PLAYER 2 WINS";
+
+            } else {
+
+                winnerText = "DRAW";
+            }
+        }
+
+        resultTitle.innerHTML = `
+            ${winnerText}
+            <br><br>
+            P1: LVL ${p1.level} - ${p1.time}s
+            <br>
+            P2: LVL ${p2.level} - ${p2.time}s
+        `;
+
+    } else {
+
+        resultTitle.innerText = text;
+
+        finalTime.innerText = timePlayed;
+
+        finalLevel.innerText = level;
+    }
+
+    if(text === "YOU WIN"){
+
+    resultPanel.style.background =
+    "url('WinBackground.png') center/contain no-repeat";
+
+    leftDecor.src = "WinGIF.gif";
+    rightDecor.src = "WinGIF.gif";
+
+    if(loseMusic && !loseMusic.paused){
+        loseMusic.pause();
+        loseMusic.currentTime = 0;
+    }
+
+    if(winMusic){
+        winMusic.currentTime = 0;
+
+        winMusic.play().catch(err =>
+            console.log("Could not play music:", err)
+        );
+    }
+
+} else {
+
+    resultPanel.style.background =
+    "url('LoseBackground.png') center/contain no-repeat";
+
+    leftDecor.src = "LoseGIF.gif";
+    rightDecor.src = "LoseGIF.gif";
+
+    if(winMusic && !winMusic.paused){
+        winMusic.pause();
+        winMusic.currentTime = 0;
+    }
+
+    if(loseMusic){
+        loseMusic.currentTime = 0;
+
+        loseMusic.play().catch(err =>
+            console.log(err)
+        );
+    }
+}
+
+leftDecor.style.display = "block";
+rightDecor.style.display = "block";
+
+resultOverlay.style.display = "flex";
 }
 
 function resetGame(){
@@ -439,17 +748,35 @@ function resetGame(){
     pauseOverlay.style.display="none"; 
     nextBtn.style.display="none"; 
 
-    // RESET GAME STATE
+    currentPlayer = 1;
+
+    playerTurnText.innerText = "1";
+
+    playerResults = {
+        player1: {
+            level: 0,
+            time: 0,
+            win: false
+        },
+
+        player2: {
+            level: 0,
+            time: 0,
+            win: false
+        }
+    };
+
+    
     level = 1;
     pairs = 2;
     timeLeft = 30;
 
-    // RESET PAUSE VARIABLES
+    
     isPaused = false;
     pauseStart = 0;
     pausedTimeAccum = 0;
 
-    // RESET CARD TRACKING
+    
     firstCard = null;
     secondCard = null;
     lockBoard = false;
@@ -504,6 +831,58 @@ function saveScore(gameName, level, score, timePlayed=0){
     .then(res => res.text())
     .then(res => console.log(res))
     .catch(err => console.log(err));
+}
+
+
+function resetForNextPlayer(){
+
+    level = 1;
+    pairs = 2;
+    timeLeft = 30;
+
+    firstCard = null;
+    secondCard = null;
+    lockBoard = false;
+    matches = 0;
+
+    pausedTimeAccum = 0;
+    pauseStart = 0;
+
+    updateUI();
+
+    gameBoard.innerHTML = "";
+}
+
+function showPlayerTurnScreen(){
+
+    pauseBtn.style.display = "none";
+
+    turnOverlay.style.display = "flex";
+
+    let countdown = 5;
+
+    turnMessage.innerText = "PLAYER 2 TURN";
+    turnCountdown.innerText = countdown;
+
+    const countdownInterval = setInterval(() => {
+
+        countdown--;
+
+        turnCountdown.innerText = countdown;
+
+        if(countdown <= 0){
+
+            clearInterval(countdownInterval);
+
+            turnOverlay.style.display = "none";
+
+            startTime = Date.now();
+
+            pauseBtn.style.display = "block";
+            startRound();
+        }
+
+    }, 1000);
 }
 </script>
 

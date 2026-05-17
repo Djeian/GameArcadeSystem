@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skill Issue Arcade - Tournament</title>
+
+    <link rel="stylesheet" href="Tournament.css">
+    <link rel="icon" type="image/png" href="Logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <nav class="navbar">
+
+    <div class="nav-left">
+        <button id="backBtn" class="back-navbar" onclick="goBack()">BACK</button>
+        <button id="backBtn1" class="back-btn2">BACK</button>
+    </div>
+
+    <div class="nav-title">
+        TOURNAMENT
+    </div>
+
+    <div class="navbar-img">
+        <img src="MenuButton.png" alt="Menu" class="menu-button" id="menuButton">
+    </div>
+
+</nav>
+    
+    <div class="main-layout" id="mainContent">
+
+        <div class="image-container">
+
+            <div class="image image-con top-left">
+                <img src="MemoryTourna.png" class="clickable-img" onclick="selectGame('memory')">
+            </div>
+
+            <div class="image image-con top-right">
+                <img src="WordleTourna.png" class="clickable-img" onclick="selectGame('wordle')">
+            </div>
+            
+            <div class="image image-con bottom-center">
+                <img src="SnakeTourna.png" class="clickable-img" onclick="selectGame('snake')">        
+            </div>
+
+        </div>
+
+        <div class="rules-panel">
+            <div class="instruction-panel">
+    <b>WHAT IS THIS TOURNAMENT?</b><br><br>
+
+    This is a weekly arcade competition where players compete in mini-games
+    to earn scores and climb the leaderboard.<br><br>
+
+    The goal is simple: survive, score high, and stay in the TOP 5 by the end of the week.<br><br>
+
+    <b>ENTRY FEE</b><br><br>
+
+    <h2>• ₱15 entry per Game</h2>
+    • Unlimited players can join anytime<br>
+    • Payment required before playing<br>
+    • Make sure your e-wallet is ready before joining<br><br>
+
+    <b>GAME MODE</b><br><br>
+
+    • Choose between 1 Player or 2 Player mode<br>
+    • Both modes are scored individually<br>
+    • Results are counted separately per player<br><br>
+
+    <b>HOW IT WORKS</b><br><br>
+
+    • Play any available game<br>
+    • Earn points based on performance<br>
+    • Rank updates live on leaderboard<br><br>
+
+    <b>WIN CONDITION</b><br><br>
+
+    • Stay in the TOP 5 leaderboard<br>
+    • Rankings reset every week<br>
+    • New winners are crowned weekly<br><br>
+
+    <b>IMPORTANT</b><br><br>
+
+    • No cheating or exploiting bugs<br>
+    • Be fair and play during active matches<br>
+    • Leaderboard refresh happens every week
+</div>
+        </div>
+
+    </div>
+
+    <div id="playerScreen" class="player-screen">
+
+    <div class="player-choice">
+
+        <img src="Solomode.png" class="mode-img" onclick="goGame(1)">
+        <img src="Vsmode.png" class="mode-img" onclick="goGame(2)">
+
+    </div>
+
+</div>
+<div id="paymentScreen" class="payment-screen">
+
+    <div class="payment-box">
+
+        <h2>SELECT PAYMENT METHOD</h2>
+
+        <p id="paymentInfo">Please choose how you want to pay</p>
+
+        <div class="payment-options">
+
+            <button onclick="confirmPayment('gcash')">
+                GCASH
+            </button>
+
+            <button onclick="confirmPayment('counter')">
+                PAY AT COUNTER
+            </button>
+
+        </div>
+
+        <button class="cancel-btn" onclick="closePayment()">
+            CANCEL
+        </button>
+
+    </div>
+</div>
+
+<div id="waitingScreen" class="waiting-screen">
+
+    <div class="waiting-box">
+
+        <h2>WAITING FOR CONFIRMATION</h2>
+
+        <p>
+            Please pay at the counter.<br><br>
+
+            YOUR ID:
+            <span id="waitingID"></span>
+
+            <br><br>
+
+            Waiting for admin approval...
+        </p>
+
+        <div class="loader"></div>
+
+    </div>
+</div>
+    <div class="overlay" id="overlay">
+
+        <div class="menu-popup" id="menuPopup" onclick="event.stopPropagation()">
+
+            <button class="back-btn" onclick="closeMenu()">BACK</button>
+
+            <img src="MenuPic.png" class="menu-title">
+
+            <img src="LeaderBoard.png" class="menu-img" onclick="window.location.href='LeaderBoard.html'">
+            <img src="About.png" class="menu-img" onclick="window.location.href='AboutUs.html'">
+            <img src="Settings.png" class="menu-img" onclick="openSettings()">
+
+        </div>
+
+        <div id="settingsModal">
+            <h2>SETTINGS</h2>
+
+            <div class="setting-option">
+                <label>Sound</label>
+                <label class="switch">
+                    <input type="checkbox" id="soundToggle" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div id="closeSettings">CLOSE</div>
+        </div>
+
+    </div>
+
+    <div class="copyright">
+        © 2026 Skill Issue Arcade. All Rights Reserved.
+    </div>
+
+    <script>
+        const menuButton = document.getElementById('menuButton');
+        const menuPopup = document.getElementById('menuPopup');
+        const overlay = document.getElementById('overlay');
+        const backBtn = document.getElementById("backBtn1");
+        const params = new URLSearchParams(window.location.search);
+        const mode = params.get("mode");
+
+
+        backBtn.onclick = ()=> window.location.href="Home.html";
+
+        menuButton.addEventListener('click', () => {
+            menuPopup.style.display = 'flex';
+            overlay.style.display = 'block';
+        });
+
+        function closeMenu() {
+            menuPopup.style.display = 'none';
+            overlay.style.display = 'none';
+        }
+
+        function openSettings() {
+            document.getElementById('settingsModal').style.display = 'flex';
+            document.body.classList.add('modal-open');
+        }
+
+        document.getElementById('closeSettings').onclick = () => {
+            document.getElementById('settingsModal').style.display = 'none';
+            document.body.classList.remove('modal-open');
+        }
+
+        const soundToggle = document.getElementById('soundToggle');
+
+        soundToggle.checked = localStorage.getItem('sound') !== 'off';
+
+        soundToggle.onchange = () => {
+            localStorage.setItem('sound', soundToggle.checked ? 'on' : 'off');
+        }
+
+        overlay.addEventListener('click', closeMenu);
+
+        let selectedGame = "";
+
+function selectGame(game) {
+    selectedGame = game;
+
+    document.getElementById("mainContent").style.display = "none";
+    document.getElementById("playerScreen").style.display = "flex";
+
+    document.getElementById("backBtn").style.display = "block"; 
+    document.getElementById("backBtn1").style.display = "none"; 
+}
+
+function goBack() {
+    document.getElementById("playerScreen").style.display = "none";
+    document.getElementById("mainContent").style.display = "flex";
+
+    document.getElementById("backBtn").style.display = "none"; 
+    document.getElementById("backBtn1").style.display = "block";
+}
+
+let selectedMode = 0;
+let pendingURL = "";
+
+function goGame(playerMode) {
+
+    selectedMode = playerMode;
+
+    if (selectedGame === "snake") {
+        pendingURL = `Tourna1Snake.html?mode=${playerMode}`;
+    }
+
+    if (selectedGame === "memory") {
+        pendingURL = `Tourna1Memory.html?mode=${playerMode}`;
+    }
+
+    if (selectedGame === "wordle") {
+        pendingURL = `Tourna1Wordle.html?mode=${playerMode}`;
+    }
+
+    document.getElementById("playerScreen").style.display = "none";
+    document.getElementById("paymentScreen").style.display = "flex";
+}
+
+function confirmPayment(method) {
+
+
+    if (method === "gcash") {
+
+        window.location.href = pendingURL;
+    }
+
+
+    if (method === "counter") {
+
+        let arcadeID = "Arcade-" + Math.floor(100000 + Math.random() * 900000);
+
+        localStorage.setItem("currentArcadeID", arcadeID);
+        document.getElementById("waitingID").innerText = arcadeID;
+
+        let paymentData = {
+            id: arcadeID,
+            method: "Counter",
+            amount: "₱15",
+            status: "Pending"
+        };
+
+        localStorage.setItem("paymentData", JSON.stringify(paymentData));
+
+        document.getElementById("paymentScreen").style.display = "none";
+
+        document.getElementById("waitingScreen").style.display = "flex";
+
+        checkApproval();
+    }
+}
+
+function checkApproval() {
+
+    let checker = setInterval(() => {
+
+        let status = localStorage.getItem("payment_p2");
+
+        // ACCEPTED
+        if (status === "approved") {
+
+            clearInterval(checker);
+
+            window.location.href = pendingURL;
+        }
+
+        // DECLINED
+        if (status === "declined") {
+
+            clearInterval(checker);
+
+            alert("Payment Declined");
+
+            window.location.reload();
+        }
+
+    }, 1000);
+}
+
+function closePayment() {
+    document.getElementById("paymentScreen").style.display = "none";
+    document.getElementById("playerScreen").style.display = "flex";
+}
+    </script>
+
+</body>
+</html>

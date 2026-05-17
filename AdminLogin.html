@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Login - Skill Issue Arcade</title>
+<link rel="icon" type="image/png" href="Logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+  }
+
+  body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url('AdminLoginBG.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  .login-box {
+    width: 350px;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  }
+
+  .login-title {
+    text-align: center;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #111827;
+  }
+
+  input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 12px;
+    border: 1px solid #95979a;
+    border-radius: 8px;
+    outline: none;
+  }
+
+  input:focus {
+    border-color: #111827;
+  }
+
+  button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    background: #350562;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  button:hover {
+    background: #270252;
+  }
+
+  .error {
+    color: red;
+    font-size: 12px;
+    text-align: center;
+    margin-top: 10px;
+  }
+</style>
+</head>
+
+<body>
+
+<div class="login-box">
+  <div class="login-title">Admin Login</div>
+
+  <form onsubmit="login(event)">
+  <input type="text" id="username" placeholder="Username">
+  <input type="password" id="password" placeholder="Password">
+
+  <button type="submit">Login</button>
+
+  <div class="error" id="error"></div>
+</form>
+</div>
+
+<script>
+function login(event) {
+  event.preventDefault();
+
+  const user = document.getElementById("username").value;
+  const pass = document.getElementById("password").value;
+
+  if (user === "admin" && pass === "1234") {
+    window.location.href = "SIAAdmin.html";
+  } else {
+    document.getElementById("error").innerText = "Invalid username or password";
+  }
+}
+</script>
+
+</body>
+</html>

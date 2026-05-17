@@ -30,6 +30,7 @@
 
         .menu-button {
             width: clamp(50px, 5vw, 50px);
+            cursor: pointer;
         }
 
         .image-container {
@@ -40,7 +41,7 @@
             gap: clamp(20px, 4vw, 50px);
             padding: 0 clamp(15px, 4vw, 30px);
             flex-wrap: wrap;
-            height: 100%;            
+            height: 100%;           
         }
 
         .image {
@@ -68,6 +69,23 @@
 
         .clickable-img:hover {
             transform: scale(1.1); 
+        }
+
+        .middle-button{
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .bottom-btn{
+            width: 250px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            margin-top: -150    px;
+        }
+
+        .bottom-btn:hover{
+            transform: scale(1.05);
         }
 
         .overlay{
@@ -240,25 +258,47 @@
             width: 450px;
          }
 
-        @media (max-width: 1046px){
-            .game3{
-                display: none;
-            }
+        @media (max-width: 1286px){
+            
             .clickable-img{
-                margin-top: 100px;
+                width: 400px;
             }
         }
-        @media (max-width: 768px){
-            .game3{
-                display: none;
-            }
+        @media (max-width: 1046px){
+            
             .clickable-img{
-                margin-top: 0px;
-                width: 380px;
+                width: 400px;
+            }
+        }
+        @media (max-width: 900px){
+            
+            .clickable-img{
+                width: 390px;
+            }
+        }
+        @media (max-width: 875px){
+            
+            .clickable-img{
+                width: 350px;
+            }
+        }
+        @media (max-width: 800px){
+            
+            .clickable-img{
+                width: 320px;
+            }
+        }
+        @media (max-width: 750px){
+            
+            .clickable-img{
+                width: 270px;
             }
         }
         @media (max-width: 480px){
-            .game3{
-                display: none;
+            
+            .clickable-img{
+                margin-top: 0px;
+                width: 270px;
             }
         }
+        

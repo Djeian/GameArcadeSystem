@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Skill Issue Arcade - Snake</title>
+<title>Skill Issue Arcade - Snake Tournament</title>
 <link rel="icon" type="image/png" href="Logo.png">
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
@@ -33,9 +33,9 @@ body {
 .ui-box{
     background:#1a030adb;
     border:3px solid #ffcc00;
-    padding:10px 100px;
+    padding:10px 30px;
     color:#ffcc00;
-    font-size:15px;
+    font-size:13px;
     box-shadow:4px 4px 0 #000;
     text-align:center;
 }
@@ -103,23 +103,53 @@ body {
 }
 
 .form-panel{
-    position:relative;
+    margin-top: 110px;
     background:#1a030aba;
     border:4px solid #ffcc00;
     padding:20px;
+    color:#fff;
+    width:100%;
+    max-width:700px;
+    box-shadow:4px 4px 0 #000;
+}
+
+/* PLAYERS */
+.players-container{
+    display:flex;
+    gap:20px;
+    width:100%;
+}
+
+.player-box{
+    flex:1;
     display:flex;
     flex-direction:column;
     gap:10px;
-    color:#fff;
-    min-width:250px;
+}
+
+/* TITLE */
+.player-title{
+    color:#ffcc00;
+    font-size:12px;
+    text-align:center;
+    margin-bottom:5px;
 }
 
 .form-panel input,
 .form-panel select{
-    padding:5px 10px;
-    padding-right: 100px;
-    font-size:15px;
+    width:100%;
+    padding:10px;
+    font-size:11px;
     font-family:'Press Start 2P', cursive;
+    box-sizing:border-box;
+}
+
+/* START BUTTON */
+.start-wrapper{
+    width:100%;
+    display:flex;
+    justify-content:center;
+    margin-top:20px;
 }
 
 .start-img{
@@ -244,11 +274,12 @@ body {
     background:#1a030aba;
     border:4px solid #ffcc00;
     padding:20px;
-    width:300px;
+    width:700px;
     color:#ffcc00;
     font-size:10px;
     line-height:1.6;
     box-shadow:4px 4px 0 #000;
+    margin-top: 60px;
 }
 
 .snake-wrap{
@@ -325,6 +356,48 @@ body {
 .ctrl-btn:active{
     transform:translate(2px,2px);
 }
+
+#player2Fields{
+    display:none;
+}
+
+.turn-overlay{
+        position:fixed;
+        top:0;
+        left:0;
+        width:100%;
+        height:100%;
+        background:rgba(0,0,0,0.85);
+        display:none;
+        justify-content:center;
+        align-items:center;
+        z-index:500;
+    }
+
+    .turn-panel{
+        background:#1a030a;
+        border:5px solid #ffcc00;
+        padding:40px;
+        text-align:center;
+        box-shadow:6px 6px 0 #000;
+        animation: popIn 0.3s ease;
+    }
+
+    .turn-panel div{
+        color:#ffcc00;
+        font-family:'Press Start 2P', cursive;
+    }
+
+    #turnMessage{
+        font-size:22px;
+        margin-bottom:25px;
+        line-height:1.5;
+    }
+
+    #turnCountdown{
+        font-size:50px;
+        margin-top: 10px;
+    }
 
 @media (max-width: 768px){
 
@@ -585,6 +658,10 @@ body {
 <img src="MenuButton.png" id="pauseBtn">
 
 <div class="top-ui">
+    <div class="ui-box">
+        PLAYER<br>
+        <span id="playerTurnText">1</span>
+    </div>
     <div class="ui-box">LEVEL<br><span id="levelText">1</span></div>
     <div class="ui-box">TIME<br><span id="timerText">60</span></div>
 </div>
@@ -611,12 +688,29 @@ body {
     • Reach the required snake length.<br>
     • Each level unlocks NEXT when completed.<br>
     • Finish all levels to WIN.<br>
+
+    <b>2 PLAYER MODE</b><br><br>
+
+    • Player 1 plays first, then Player 2 follows.<br>
+    • Each player has their own score (tracked individually).<br>
+    • Scores are NOT combined.<br>
+    • Leaderboard ranks players based on total individual performance.<br>
 </div>
 
     <div class="form-panel" id="formPanel">
+
+    <div class="players-container">
+
+        <!-- PLAYER 1 -->
+        <div class="player-box" id="player1Box">
+
+        <h3>PLAYER 1</h3>
+
         <input type="text" placeholder="FIRST NAME" id="fname">
+
         <input type="text" placeholder="LAST NAME" id="lname">
-        <input type="text" placeholder="NUMBER (Tournament)" id="number">
+
+        <input type="text" placeholder="NUMBER" id="number">
 
         <select id="type">
             <option value="">ARE YOU STUDENT?</option>
@@ -635,8 +729,45 @@ body {
             <option value="">STRAND/TRACK</option>
         </select>
 
-        <img src="Start.png" id="startBtn" class="start-img" onclick="alert('The Game Will Start Immediately, Be Ready')">
     </div>
+
+
+    <!-- PLAYER 2 -->
+    <div class="player-box" id="player2Fields" style="display:none;">
+
+        <h3>PLAYER 2</h3>
+
+        <input type="text" placeholder="FIRST NAME" id="fname2">
+
+        <input type="text" placeholder="LAST NAME" id="lname2">
+
+        <input type="text" placeholder="NUMBER" id="number2">
+
+        <select id="type2">
+            <option value="">ARE YOU STUDENT?</option>
+            <option value="yes">YES</option>
+            <option value="no">NO</option>
+        </select>
+
+        <select id="grade2" style="display:none;">
+            <option value="">GRADE LEVEL</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="COLLEGE">COLLEGE</option>
+        </select>
+
+        <select id="strand2" style="display:none;">
+            <option value="">STRAND/TRACK</option>
+        </select>
+
+    </div>
+
+</div>
+<div class="start-wrapper">
+    <img src="Start.png" id="startBtn" class="start-img">
+</div>
+
+</div>
 
 </div>
 
@@ -680,6 +811,13 @@ body {
     </div>
 </div>
 
+<div id="turnOverlay" class="turn-overlay" style="display:none;">
+    <div class="turn-panel">
+        <div id="turnTitle">PLAYER 2 TURN</div>
+        <div id="turnCountdown">5</div>
+    </div>
+</div>
+
 <div class="copyright">
     © 2026 Skill Issue Arcade. All Rights Reserved.
 </div>
@@ -719,15 +857,39 @@ const leftDecor = document.getElementById("leftDecor");
 const rightDecor = document.getElementById("rightDecor");
 const winMusic = document.getElementById("winMusic");
 const loseMusic = document.getElementById("loseMusic");
+const playerSwitchOverlay = document.getElementById("turnOverlay");
+const switchTitle = document.getElementById("turnTitle");
+const switchCountdown = document.getElementById("turnCountdown");
+const playerTurnText = document.getElementById("playerTurnText");
+const params = new URLSearchParams(window.location.search);
+const mode = params.get("mode");
+
+if(mode === "2"){
+    document.getElementById("player2Fields").style.display = "flex";
+} else {
+    document.getElementById("player1Box").classList.add("single-player");
+}
 
 let level = 1, maxLevel = 3;
+
+let currentPlayer = 1;
+
+let playerResults = {
+    player1: {
+        score: 0
+    },
+    player2: {
+        score: 0
+    }
+};
+
 let isPaused = false, timeLeft = 60, tickInterval, timerInterval;
 let snake, dir, nextDir, food, gameOver, tickMs;
 
 const LEVEL_SPEED = [200, 140, 90];
 
 // NAVIGATION
-backBtn.onclick = ()=> window.location.href="Home.html";
+backBtn.onclick = ()=> window.location.href="Tournament.html";
 
 nextBtn.onclick = ()=> {
     if(level >= maxLevel){
@@ -766,6 +928,63 @@ gradeSelect.addEventListener("change", () => {
     strandSelect.innerHTML=options;
 });
 
+const typeSelect2 = document.getElementById("type2");
+const gradeSelect2 = document.getElementById("grade2");
+const strandSelect2 = document.getElementById("strand2");
+
+typeSelect2.addEventListener("change", () => {
+
+    if(typeSelect2.value === "yes"){
+
+        gradeSelect2.style.display = "block";
+        strandSelect2.style.display = "block";
+
+        strandSelect2.innerHTML =
+        '<option value="">STRAND/TRACK</option>';
+
+    } else {
+
+        gradeSelect2.style.display = "none";
+        strandSelect2.style.display = "none";
+
+        gradeSelect2.value = "";
+        strandSelect2.value = "";
+    }
+});
+
+gradeSelect2.addEventListener("change", () => {
+
+    const grade = gradeSelect2.value;
+
+    let options = '<option value="">STRAND/TRACK</option>';
+
+    if(grade === "11" || grade === "12"){
+
+        options += `
+        <option value="ABM">ABM</option>
+        <option value="MAWD">MAWD</option>
+        <option value="DIGAR">DIGAR</option>
+        <option value="STEM">STEM</option>
+        <option value="CUART">CUART</option>
+        `;
+
+    } else if(grade === "COLLEGE"){
+
+        options += `
+        <option value="BSIT">BSIT</option>
+        <option value="BSCpE">BSCpE</option>
+        <option value="BSBA">BSBA</option>
+        <option value="BSAIS">BSAIS</option>
+        <option value="BSA">BSA</option>
+        <option value="BSCM">BSCM</option>
+        <option value="BSTM">BSTM</option>
+        <option value="HRS">HRS</option>
+        `;
+    }
+
+    strandSelect2.innerHTML = options;
+});
+
 
 // START BUTTON
 startBtn.onclick = () => {
@@ -799,6 +1018,17 @@ startBtn.onclick = () => {
         alert("Select grade and strand!");
         return;
     }
+
+    if(mode === "2"){
+
+    const fname2 = document.getElementById("fname2").value.trim();
+    const lname2 = document.getElementById("lname2").value.trim();
+
+    if(!fname2 || !lname2){
+        alert("Fill Player 2 fields!");
+        return;
+    }
+}
 
     alert("The Game Will Start immediately, Be Ready");
 
@@ -845,11 +1075,11 @@ continueBtn.onclick = () => {
 
 // RESET
 restartGameBtn.onclick = ()=> location.reload();
-restartBtn.onclick = ()=> window.location.href="Home.html";
+restartBtn.onclick = ()=> window.location.href="Tournament.html";
 exitBtn.onclick = ()=> window.location.href="AboutUs.html";
 
 resultRestart.onclick = ()=> location.reload();
-resultHome.onclick = ()=> window.location.href="Home.html";
+resultHome.onclick = ()=> window.location.href="Tournament.html";
 resultSettings.onclick = ()=> window.location.href="AboutUs.html";
 
 // SNAKE GAME FUNCTIONS
@@ -859,9 +1089,56 @@ const START_LEN = 4;
 const size = Math.min(snakeCanvas.clientWidth, snakeCanvas.clientHeight);
 snakeCanvas.width = snakeCanvas.height = size;
 
+function resetGame(){
+
+    clearInterval(tickInterval);
+    clearInterval(timerInterval);
+
+    level = 1;
+    levelText.innerText = level;
+
+    nextBtn.style.display = "none";
+
+    gameOver = false;
+    isPaused = false;
+}
+
+function startPlayer2Turn(){
+
+    playerSwitchOverlay.style.display = "flex";
+
+    let countdown = 5;
+
+    switchTitle.innerText = "PLAYER 2 TURN";
+    switchCountdown.innerText = countdown;
+
+    const countdownInterval = setInterval(() => {
+
+        countdown--;
+
+        switchCountdown.innerText = countdown;
+
+        if(countdown <= 0){
+
+            clearInterval(countdownInterval);
+
+            playerSwitchOverlay.style.display = "none";
+
+            currentPlayer = 2;
+            playerTurnText.innerText = "2";
+
+            resetGame();
+
+            startSnakeLevel();
+        }
+
+    }, 1000);
+}
+
 function startSnakeLevel(){
     timeLeft = 60;
     timerText.innerText = timeLeft;
+    foodEaten = 0;
     snakeWrap.style.display="flex"; 
     snakeCanvas.focus();              
     initSnake();                      
@@ -871,6 +1148,8 @@ function startSnakeLevel(){
     tickInterval = setInterval(step, tickMs); 
     startTimer();
 }
+
+let foodEaten = 0;
 
 function initSnake(){
     const mid = Math.floor(GRID/2);
@@ -965,51 +1244,136 @@ walls.forEach(w => ctx.fillRect(w.x*c, w.y*c, c, c));
 }
 
 function showResult(title, message){
+
     resultOverlay.style.display = "flex";
     resultTitle.innerText = title;
     finalWord.innerText = message;
-}
 
-function endLevel(win, customMessage) {
-    clearInterval(tickInterval);
-    clearInterval(timerInterval);
-    gameOver = true;
+    
+    winMusic.pause();
+    loseMusic.pause();
 
-    let scoreToSave = snake.length;
+    winMusic.currentTime = 0;
+    loseMusic.currentTime = 0;
 
-    if (win || snake.length >= LEVEL_TARGET_LENGTH[level-1]) {
-        if (level < maxLevel) {
-            nextBtn.style.display = "block";
-        } else {
-            showResult("YOU WIN", `Completed all levels in ${60 - timeLeft}s!`);
-            leftDecor.src = "WinGIF.gif";
-            rightDecor.src = "WinGIF.gif";
-        if(loseMusic && !loseMusic.paused){
-            loseMusic.pause();
-            loseMusic.currentTime = 0;
-        }
-        if(winMusic){
-            winMusic.currentTime = 0; 
-            winMusic.play().catch(err => {
-        console.log("Could not play music:", err);
-        });
-        }
-        saveScore("Snake", level, scoreToSave, timeLeft);
-        }
-    } else {
-        showResult("YOU LOSE", customMessage || `Level ${level} failed with ${timeLeft}s left`);
+    
+    if(title.includes("WIN")){
+
+        resultPanel.style.background =
+        "url('WinBackground.png') center/contain no-repeat";
+
+        leftDecor.src = "WinGIF.gif";
+        rightDecor.src = "WinGIF.gif";
+
+        winMusic.play();
+
+    } 
+    
+    
+    else if(title.includes("LOSE")){
+
+        resultPanel.style.background =
+        "url('LoseBackground.png') center/contain no-repeat";
+
         leftDecor.src = "LoseGIF.gif";
         rightDecor.src = "LoseGIF.gif";
-        if(winMusic && !winMusic.paused){
-            winMusic.pause();
-            winMusic.currentTime = 0;
-        }
-        if(loseMusic){
-            loseMusic.currentTime = 0;
-            loseMusic.play().catch(err => console.log(err));
-        }
-        saveScore("Snake", level, scoreToSave,timeLeft);
+
+        loseMusic.play();
     }
+
+    
+    else if(title.includes("TIE")){
+
+        resultPanel.style.background =
+        "url('WinBackground.png') center/contain no-repeat";
+
+        leftDecor.src = "WinGIF.gif";
+        rightDecor.src = "WinGIF.gif";
+
+        winMusic.play();
+    }
+
+    leftDecor.style.display = "block";
+    rightDecor.style.display = "block";
+}
+
+function endLevel(win, customMessage){
+
+    clearInterval(tickInterval);
+    clearInterval(timerInterval);
+
+    gameOver = true;
+
+    let score = foodEaten;
+
+   
+    if(currentPlayer === 1){
+
+        playerResults.player1.score += score;
+
+    } else {
+
+        playerResults.player2.score += score;
+    }
+
+    
+    if(mode === "2" && currentPlayer === 1){
+
+        startPlayer2Turn();
+        return;
+    }
+
+    
+    if(mode === "2" && currentPlayer === 2){
+
+        const p1 = playerResults.player1.score;
+        const p2 = playerResults.player2.score;
+
+        let winnerText = "";
+
+        if(p1 > p2){
+
+            winnerText = "PLAYER 1 WINS";
+
+
+        } else if(p2 > p1){
+
+            winnerText = "PLAYER 2 WINS";
+
+
+        } else {
+
+            winnerText = "IT'S A TIE";
+
+        }
+
+        showResult(
+            winnerText,
+            `P1 SCORE: ${p1} | P2 SCORE: ${p2}`
+        );
+
+        leftDecor.style.display = "block";
+        rightDecor.style.display = "block";
+
+        return;
+    }
+
+    // SINGLE PLAYER
+    if(win){
+
+        showResult("YOU WIN", "Completed all levels!");
+
+        leftDecor.src = "WinGIF.gif";
+        rightDecor.src = "WinGIF.gif";
+
+    } else {
+
+        showResult("YOU LOSE", customMessage || "Game Over");
+
+        leftDecor.src = "LoseGIF.gif";
+        rightDecor.src = "LoseGIF.gif";
+    }
+
     leftDecor.style.display = "block";
     rightDecor.style.display = "block";
 }
@@ -1101,7 +1465,7 @@ leftBtn.addEventListener("click", () => changeDirection("left"));
 rightBtn.addEventListener("click", () => changeDirection("right"));
 
 const LEVEL_TARGET_LENGTH = [8, 12, 16];
-walls = generateRandomWalls(NUM_WALLS_PER_LEVEL[level-1]);
+walls = generateRandomWalls(level * 5);
 const numWalls = 5 + (level - 1) * 3;
 function step(){
     if(gameOver || isPaused) return;
@@ -1130,10 +1494,11 @@ if(walls.some(w => w.x === newHead.x && w.y === newHead.y)){
 
     // GROW WHEEN EAT
     if(newHead.x === food.x && newHead.y === food.y){
-        spawnFood();
+    foodEaten++;
+    spawnFood();
     } else {
-        snake.shift();
-    }
+    snake.shift();
+}
 
     drawSnake();
 
@@ -1143,10 +1508,12 @@ if(walls.some(w => w.x === newHead.x && w.y === newHead.y)){
         clearInterval(tickInterval); 
 
         if(level < maxLevel){
-            nextBtn.style.display = "block"; 
+
+            nextBtn.style.display = "block";
+
         } else {
-            
-            showResult("YOU WIN", "Completed all levels!");
+
+            endLevel(true, "Completed all levels!");
         }
     }
 }

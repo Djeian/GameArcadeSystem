@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skill Issue Arcade - Wordle Tournament</title>
+<link rel="icon" type="image/png" href="Logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="Tourna1Wordle.css">
+</head>
+    
+<body>
+<input type="text" id="mobileInput" maxlength="5" style="position:absolute; opacity:0;">
+
+<button id="backBtn" class="back-btn">BACK</button>
+
+<img src="MenuButton.png" id="pauseBtn">
+
+<div class="top-ui">
+    <div class="ui-box">
+        PLAYER<br>
+        <span id="playerTurnText">1</span>
+    </div>
+    <div class="ui-box">WORD GUESS<br><span id="levelText">1</span></div>
+    <div class="ui-box">TIME<br><span id="timerText">80</span></div>
+    <button id="nextBtn">NEXT</button>
+</div>
+
+<div class="form-wrapper">
+
+    <div class="instruction-panel">
+        <b>HOW TO PLAY</b><br><br>
+        • Guess the 5-letter word.<br>
+        • You have 6 tries per level.<br>
+        • Each level has 80 seconds.<br><br>
+
+        <b>COLORS</b><br><br>
+
+        🟩 GREEN = Correct letter, correct place<br>
+        🟨 YELLOW = Correct letter, wrong place<br>
+        ⬛ GRAY = Not in the word<br><br>
+
+        <i>Note:</i> Yellow means the letter exists, not that all copies are in the word.<br><br>
+
+        <b>GOAL</b><br><br>
+
+        • Complete all 5 levels<br>
+        • Each correct word unlocks NEXT<br>
+        • Finish all to WIN<br><br>
+
+        <b>2 PLAYER MODE</b><br><br>
+
+        • Each player has their own score (tracked separately for leaderboard).<br>
+        • Player 1 plays first, then Player 2 follows after.<br>
+        • Highest total score after all levels wins.<br>
+        </div>
+
+    <div class="form-panel" id="formPanel">
+
+    <div class="players-container">
+
+        <!-- PLAYER 1 -->
+        <div class="player-box" id="player1Box">
+
+        <h3>PLAYER 1</h3>
+
+        <input type="text" placeholder="FIRST NAME" id="fname">
+
+        <input type="text" placeholder="LAST NAME" id="lname">
+
+        <input type="text" placeholder="NUMBER" id="number">
+
+        <select id="type">
+            <option value="">ARE YOU STUDENT?</option>
+            <option value="yes">YES</option>
+            <option value="no">NO</option>
+        </select>
+
+        <select id="grade" style="display:none;">
+            <option value="">GRADE LEVEL</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="COLLEGE">COLLEGE</option>
+        </select>
+
+        <select id="strand" style="display:none;">
+            <option value="">STRAND/TRACK</option>
+        </select>
+
+    </div>
+
+
+    <!-- PLAYER 2 -->
+    <div class="player-box" id="player2Fields" style="display:none;">
+
+        <h3>PLAYER 2</h3>
+
+        <input type="text" placeholder="FIRST NAME" id="fname2">
+
+        <input type="text" placeholder="LAST NAME" id="lname2">
+
+        <input type="text" placeholder="NUMBER" id="number2">
+
+        <select id="type2">
+            <option value="">ARE YOU STUDENT?</option>
+            <option value="yes">YES</option>
+            <option value="no">NO</option>
+        </select>
+
+        <select id="grade2" style="display:none;">
+            <option value="">GRADE LEVEL</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="COLLEGE">COLLEGE</option>
+        </select>
+
+        <select id="strand2" style="display:none;">
+            <option value="">STRAND/TRACK</option>
+        </select>
+
+    </div>
+
+</div>
+<div class="start-wrapper">
+    <img src="Start.png" id="startBtn" class="start-img">
+</div>
+
+</div>
+</div>
+
+<div class="pause-overlay" id="pauseOverlay">
+    <div class="pause-panel">
+        <div class="pause-buttons">
+            <img src="Restart.png" id="restartGameBtn" class="pause-btn-img">
+            <img src="HomeButton.png" id="restartBtn" class="pause-btn-img">
+            <img src="About2.png" id="exitBtn" class="pause-btn-img">
+        </div>
+        <img src="Continue.png" id="continueBtn" class="continue-btn">
+    </div>
+</div>
+
+<div class="result-overlay" id="resultOverlay">
+    <div class="result-panel" id="resultPanel">
+        <div class="result-info">
+            <div id="resultTitle">YOU WIN</div><br>
+            <div>WORD: <span id="finalWord"></span></div>
+        </div>
+        <img src="WinLeft.png" id="leftDecor" class="side-decor">
+        <img src="WinRight.png" id="rightDecor" class="side-decor">
+        <div class="result-buttons">
+            <img src="Restart.png" id="resultRestart" class="result-btn-img">
+            <img src="HomeButton.png" id="resultHome" class="result-btn-img">
+            <img src="About2.png" id="resultSettings" class="result-btn-img">
+        </div>
+    </div>
+</div>
+<div id="turnOverlay" class="turn-overlay" style="display:none;">
+    <div class="turn-panel">
+        <div id="turnTitle">PLAYER 2 TURN</div>
+        <div id="turnCountdown">5</div>
+    </div>
+</div>
+
+<div class="board" id="board"></div>
+<div class="copyright">
+    © 2026 Skill Issue Arcade. All Rights Reserved.
+</div>
+<audio class="sound" id="winMusic" src="LOWCORTISOL.mp3" preload="auto"></audio>
+<audio class="sound" id="loseMusic" src="HIGHCORTISOL.mp3" preload="auto"></audio>
+<script>
+const formPanel = document.getElementById("formPanel");
+const startBtn = document.getElementById("startBtn");
+const backBtn = document.getElementById("backBtn");
+const typeSelect = document.getElementById("type");
+const gradeSelect = document.getElementById("grade");
+const strandSelect = document.getElementById("strand");
+
+const pauseBtn = document.getElementById("pauseBtn");
+const pauseOverlay = document.getElementById("pauseOverlay");
+const continueBtn = document.getElementById("continueBtn");
+const restartGameBtn = document.getElementById("restartGameBtn");
+const restartBtn = document.getElementById("restartBtn");
+const exitBtn = document.getElementById("exitBtn");
+
+const resultOverlay = document.getElementById("resultOverlay");
+const resultPanel = document.getElementById("resultPanel");
+const resultTitle = document.getElementById("resultTitle");
+const finalWord = document.getElementById("finalWord");
+const resultRestart = document.getElementById("resultRestart");
+const resultHome = document.getElementById("resultHome");
+const resultSettings = document.getElementById("resultSettings");
+
+const board = document.getElementById("board");
+const timerText = document.getElementById("timerText");
+const levelText = document.getElementById("levelText");
+const nextBtn = document.getElementById("nextBtn");
+const formWrapper = document.querySelector(".form-wrapper");
+const leftDecor = document.getElementById("leftDecor");
+const rightDecor = document.getElementById("rightDecor");
+const winMusic = document.getElementById("winMusic");
+const loseMusic = document.getElementById("loseMusic");
+const turnOverlay = document.getElementById("turnOverlay");
+const turnTitle = document.getElementById("turnTitle");
+const turnCountdown = document.getElementById("turnCountdown");
+const playerTurnText = document.getElementById("playerTurnText");
+const params = new URLSearchParams(window.location.search);
+const mode = params.get("mode");
+
+if(mode === "2"){
+    document.getElementById("player2Fields").style.display = "flex";
+} else {
+    document.getElementById("player1Box").classList.add("single-player");
+}
+
+let secretWord="", currentRow=0, currentGuess="";
+let isPaused=false, timer, timeLeft=80, startTime=0, pausedTimeAccum=0, pauseStart=0;
+let level=1, maxLevel=5;
+let levelCompleted=false;
+
+backBtn.onclick = ()=> window.location.href="Tournament.html";
+
+// FORM dynamic
+typeSelect.addEventListener("change", () => {
+    if(typeSelect.value==="yes"){
+        gradeSelect.style.display="block";
+        strandSelect.style.display="block";
+        strandSelect.innerHTML='<option value="">STRAND/TRACK</option>';
+    } else {
+        gradeSelect.style.display="none";
+        strandSelect.style.display="none";
+        gradeSelect.value="";
+        strandSelect.value="";
+    }
+});
+
+gradeSelect.addEventListener("change", () => {
+    const grade = gradeSelect.value;
+    let options='<option value="">STRAND/TRACK</option>';
+    if(grade==="11" || grade==="12"){
+        options+='<option value="ABM">ABM</option><option value="MAWD">MAWD</option><option value="DIGAR">DIGAR</option><option value="STEM">STEM</option><option value="CUART">CUART</option>';
+    } else if(grade==="COLLEGE"){
+        options+='<option value="BSIT">BSIT</option><option value="BSCpE">BSCpE</option><option value="BSBA">BSBA</option><option value="BSAIS">BSAIS</option><option value="BSA">BSA</option><option value="BSCM">BSCM</option><option value="BSTM">BSTM</option><option value="HRS">HRS</option>';
+    }
+    strandSelect.innerHTML=options;
+});
+
+const typeSelect2 = document.getElementById("type2");
+const gradeSelect2 = document.getElementById("grade2");
+const strandSelect2 = document.getElementById("strand2");
+
+typeSelect2.addEventListener("change", () => {
+
+    if(typeSelect2.value === "yes"){
+
+        gradeSelect2.style.display = "block";
+        strandSelect2.style.display = "block";
+
+        strandSelect2.innerHTML =
+        '<option value="">STRAND/TRACK</option>';
+
+    } else {
+
+        gradeSelect2.style.display = "none";
+        strandSelect2.style.display = "none";
+
+        gradeSelect2.value = "";
+        strandSelect2.value = "";
+    }
+});
+
+gradeSelect2.addEventListener("change", () => {
+
+    const grade = gradeSelect2.value;
+
+    let options =
+    '<option value="">STRAND/TRACK</option>';
+
+    if(grade === "11" || grade === "12"){
+
+        options += '<option value="ABM">ABM</option>';
+        options += '<option value="MAWD">MAWD</option>';
+        options += '<option value="DIGAR">DIGAR</option>';
+        options += '<option value="STEM">STEM</option>';
+        options += '<option value="CUART">CUART</option>';
+
+    } else if(grade === "COLLEGE"){
+
+        options += '<option value="BSIT">BSIT</option>';
+        options += '<option value="BSCpE">BSCpE</option>';
+        options += '<option value="BSBA">BSBA</option>';
+        options += '<option value="BSAIS">BSAIS</option>';
+        options += '<option value="BSA">BSA</option>';
+        options += '<option value="BSCM">BSCM</option>';
+        options += '<option value="BSTM">BSTM</option>';
+        options += '<option value="HRS">HRS</option>';
+    }
+
+    strandSelect2.innerHTML = options;
+});
+
+const words = [
+{word:"MANGO", category:"Fruit", hint:"Sweet tropical fruit popular in the Philippines"},
+{word:"JEANS", category:"Clothing", hint:"Denim pants everyone wears"},
+{word:"APPLE", category:"Fruit", hint:"Common fruit, also a famous tech brand"},
+{word:"TRAIN", category:"Transport", hint:"Runs on tracks"},
+{word:"BAYAN", category:"Geography", hint:"Filipino term for town or community"},
+{word:"BIBLE", category:"Religion", hint:"Holy book read by many people"},
+{word:"PIXEL", category:"Technology", hint:"Smallest unit of a digital image"},
+{word:"EMBER", category:"Nature", hint:"Glowing remnant of fire"},
+{word:"LYRIC", category:"Music", hint:"Words of a song"},
+{word:"PLANE", category:"Transport", hint:"Flies in the sky"},
+{word:"LIGHT", category:"Physics", hint:"Can brighten a room"},
+{word:"BRICK", category:"Building", hint:"Used to make walls"},
+{word:"SWEET", category:"Taste", hint:"Sugary flavor"},
+{word:"COINS", category:"Money", hint:"Metal currency used in transactions"},
+{word:"WATER", category:"Nature", hint:"Essential for life"},
+{word:"SHOES", category:"Clothing", hint:"Worn on feet"},
+{word:"RIZAL", category:"Culture", hint:"Famous Filipino national hero"},
+{word:"MUSIC", category:"Entertainment", hint:"Art of organized sound"},
+{word:"CANDY", category:"Food", hint:"Sweet treat for kids"},
+{word:"CLOCK", category:"Time", hint:"Shows hours and minutes"},
+{word:"PHONE", category:"Technology", hint:"Used to call or message people"},
+{word:"TABLE", category:"Furniture", hint:"Flat surface to eat or work on"},
+{word:"CHAIR", category:"Furniture", hint:"You sit on it"},
+{word:"ROBOT", category:"Technology", hint:"Can perform tasks automatically"},
+{word:"SWORD", category:"Weapon", hint:"Used in battles in medieval times"},
+{word:"HEART", category:"Body", hint:"Pumps blood through your body"},
+{word:"RIVER", category:"Nature", hint:"Flowing water across land"},
+{word:"MONEY", category:"Finance", hint:"Used to buy things"},
+{word:"BREAD", category:"Food", hint:"Common staple made from flour"},
+{word:"PLANT", category:"Nature", hint:"Grows from soil and sunlight"},
+{word:"GLASS", category:"Material", hint:"Transparent, used in windows"},
+{word:"SHIRT", category:"Clothing", hint:"Worn on the upper body"},
+{word:"BOOKS", category:"Education", hint:"Contains written pages to read"},
+{word:"PAINT", category:"Art", hint:"Used to create colorful pictures"},
+{word:"CLOUD", category:"Nature", hint:"White fluffy thing in the sky"},
+{word:"CROWN", category:"Royalty", hint:"Worn by kings and queens"},
+{word:"DRINK", category:"Food", hint:"Something you sip"},
+{word:"BRUSH", category:"Art", hint:"Used to paint or clean"},
+{word:"FROST", category:"Weather", hint:"Thin layer of ice on surfaces"},
+{word:"GLOVE", category:"Clothing", hint:"Worn on hands"},
+{word:"SHARK", category:"Animal", hint:"Dangerous predator in the sea"},
+{word:"JUICE", category:"Food", hint:"Liquid from fruits or vegetables"},
+{word:"PEARL", category:"Nature", hint:"Found inside an oyster"},
+{word:"PLUGS", category:"Technology", hint:"Connects devices to electricity"},
+{word:"DRUMS", category:"Music", hint:"Percussion instrument you hit"},
+{word:"SNAKE", category:"Animal", hint:"Slithering reptile"},
+{word:"BERRY", category:"Food", hint:"Small juicy fruit"},
+{word:"BLOCK", category:"Building", hint:"Used to make structures"},
+{word:"GRASS", category:"Nature", hint:"Covers the ground outdoors"},
+{word:"PIZZA", category:"Food", hint:"Round flatbread with toppings"},
+{word:"WHEEL", category:"Transport", hint:"Used to move vehicles"},
+{word:"ROSES", category:"Nature", hint:"Popular fragrant flowers"},
+{word:"LEMON", category:"Fruit", hint:"Sour yellow citrus fruit"},
+{word:"TIGER", category:"Animal", hint:"Big striped cat in the wild"},
+{word:"WATCH", category:"Time", hint:"Worn on the wrist"},
+{word:"COOKS", category:"Profession", hint:"People who prepare food"},
+{word:"SPICE", category:"Food", hint:"Adds flavor to meals"},
+{word:"MOUNT", category:"Geography", hint:"Large elevated landform"},
+{word:"SHEET", category:"Stationery", hint:"A single page of paper"},
+{word:"FISHY", category:"Animal", hint:"Lives in water"},
+{word:"DRIVE", category:"Transport", hint:"Act of operating a vehicle"},
+{word:"SHINE", category:"Action", hint:"To give off light"},
+{word:"FLOUR", category:"Food", hint:"Powder used for baking"},
+{word:"CAMPY", category:"Activity", hint:"Fun outdoors adventure"},
+{word:"LEAFY", category:"Nature", hint:"Full of green leaves"},
+{word:"FLAME", category:"Nature", hint:"Hot burning gas and light"},
+{word:"PASTA", category:"Food", hint:"Italian noodle dish"},
+{word:"COUCH", category:"Furniture", hint:"Used for sitting or lying"},
+{word:"PRIDE", category:"Emotion", hint:"Feeling of self-respect"},
+{word:"SPOON", category:"Utensil", hint:"Used to eat liquids"},
+{word:"BRAVE", category:"Emotion", hint:"Not afraid to face danger"},
+{word:"TRUCK", category:"Transport", hint:"Vehicle for carrying goods"},
+{word:"BEACH", category:"Nature", hint:"Sandy area by the sea"},
+{word:"MOUSE", category:"Animal", hint:"Small rodent often in houses"},
+{word:"CLEAN", category:"Action", hint:"To remove dirt or mess"},
+{word:"GAMER", category:"Entertainment", hint:"Someone who plays video games"},
+{word:"CHAOS", category:"Concept", hint:"Complete disorder or confusion"},
+{word:"WINDY", category:"Weather", hint:"Characterized by strong air movement"},
+{word:"SMILE", category:"Emotion", hint:"Expression of happiness"},
+{word:"LAUGH", category:"Action", hint:"Sound made when amused"},
+{word:"DREAM", category:"Mind", hint:"Thoughts during sleep"},
+{word:"SLEEP", category:"Body", hint:"Resting state at night"},
+{word:"SOUND", category:"Physics", hint:"What you hear"},
+{word:"VOICE", category:"Body", hint:"Used to speak"},
+{word:"IMAGE", category:"Media", hint:"Visual representation"},
+{word:"COLOR", category:"Art", hint:"Hue like red or blue"},
+{word:"SHAPE", category:"Geometry", hint:"Form of an object"},
+{word:"SOLID", category:"Science", hint:"State of matter"},
+{word:"ROUND", category:"Shape", hint:"Like a circle"},
+{word:"SHARP", category:"Quality", hint:"Has a fine edge"},
+{word:"BLUNT", category:"Quality", hint:"Not sharp"},
+{word:"QUICK", category:"Speed", hint:"Fast movement"},
+{word:"SLOWE", category:"Speed", hint:"Not fast (slow)"},
+{word:"EARTH", category:"Space", hint:"Our home planet"},
+{word:"OCEAN", category:"Nature", hint:"Large body of salt water"},
+{word:"SKIES", category:"Nature", hint:"What you see above"},
+{word:"STORM", category:"Weather", hint:"Heavy rain and wind"},
+{word:"RAINY", category:"Weather", hint:"Full of rain"},
+{word:"SUNNY", category:"Weather", hint:"Bright with sunlight"}
+];
+
+//START
+startBtn.onclick = () => {
+    const fname = document.getElementById("fname").value.trim();
+    const lname = document.getElementById("lname").value.trim();
+    const number = document.getElementById("number").value.trim();
+    const type = typeSelect.value;
+    const grade = gradeSelect.value;
+    const strand = strandSelect.value;
+
+    if(!fname || !lname || !type){
+        alert("Fill required fields!");
+        return;
+    }
+
+    if(!/^[A-Za-z\s]{1,50}$/.test(fname)){
+        alert("First name can only contain letters and max 50 characters");
+        return;
+    }
+    if(!/^[A-Za-z\s]{1,50}$/.test(lname)){
+        alert("Last name can only contain letters and max 50 characters");
+        return;
+    }
+
+    if(number && !/^\d{11}$/.test(number)){
+        alert("Number must be exactly 11 digits");
+        return;
+    }
+
+    if(type === "yes" && (!grade || !strand)){
+        alert("Select grade and strand!");
+        return;
+    }
+
+    if(mode === "2"){
+
+    const fname2 = document.getElementById("fname2").value.trim();
+    const lname2 = document.getElementById("lname2").value.trim();
+    const number2 = document.getElementById("number2").value.trim();
+    const type2 = document.getElementById("type2").value;
+    const grade2 = document.getElementById("grade2").value;
+    const strand2 = document.getElementById("strand2").value;
+
+    if(!fname2 || !lname2 || !type2){
+        alert("Fill Player 2 required fields!");
+        return; 
+    }
+
+    if(!/^[A-Za-z\s]{1,50}$/.test(fname2)){
+        alert("Player 2 first name invalid!");
+        return;
+    }
+
+    if(!/^[A-Za-z\s]{1,50}$/.test(lname2)){
+        alert("Player 2 last name invalid!");
+        return;
+    }
+
+    if(number2 && !/^\d{11}$/.test(number2)){
+        alert("Player 2 number must be 11 digits!");
+        return;
+    }
+
+    if(type2 === "yes" && (!grade2 || !strand2)){
+        alert("Select Player 2 grade and strand!");
+        return;
+    }
+}
+
+    formWrapper.style.display="none";
+        backBtn.style.display="none";
+        pauseBtn.style.display="block";
+        startTime = Date.now();
+        pausedTimeAccum = 0;
+        timeLeft = 80;
+    startGame();
+};
+
+const fname = document.getElementById("fname");
+const lname = document.getElementById("lname");
+const number = document.getElementById("number");
+
+fname.addEventListener("input", function() {
+    this.value = this.value.replace(/[^A-Za-z ]/g, '');
+});
+
+lname.addEventListener("input", function() {
+    this.value = this.value.replace(/[^A-Za-z ]/g, '');
+});
+
+number.addEventListener("input", function() {
+    this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11);
+});
+
+pauseBtn.onclick = ()=> {
+    if(isPaused) return;
+    isPaused = true;
+    pauseStart = Date.now();
+    clearInterval(timer);
+    pauseOverlay.style.display="flex";
+};
+
+continueBtn.onclick = ()=> {
+    if(!isPaused) return;
+    isPaused = false;
+    pausedTimeAccum += Date.now()-pauseStart;
+    pauseOverlay.style.display="none";
+    if(!levelCompleted) startTimer();
+};
+
+restartGameBtn.onclick = ()=> location.reload();
+restartBtn.onclick = ()=> window.location.href="Tournament.html";
+exitBtn.onclick = ()=> window.location.href="AboutUs.html";
+
+
+document.addEventListener("keydown", e=>{
+    if(!secretWord || currentRow>=6 || isPaused) return;
+    if(e.key==="Enter"){
+        if(currentGuess.length!==5) return;
+        checkWord();
+        return;
+    }
+    if(e.key==="Backspace"){
+        currentGuess=currentGuess.slice(0,-1);
+        updateTiles();
+        return;
+    }
+    if(/^[a-zA-Z]$/.test(e.key) && currentGuess.length<5){
+        currentGuess+=e.key.toUpperCase();
+        updateTiles();
+    }
+});
+
+function startGame(){
+    resetBoard();
+
+    const secret = words[Math.floor(Math.random()*words.length)];
+    secretWord = secret.word;
+
+    const catDiv = document.getElementById("category");
+    if(catDiv) catDiv.remove();
+    const catNew = document.createElement("div");
+    catNew.id="category"; catNew.style.color="#ffcc00"; catNew.style.margin="10px";
+    catNew.textContent = "Category: " + secret.category;
+    document.body.insertBefore(catNew, board);
+
+    const hintDiv = document.getElementById("hint");
+    if(hintDiv) hintDiv.remove();
+    const hintNew = document.createElement("div");
+    hintNew.id="hint"; hintNew.style.color="Yellow"; hintNew.style.margin="10px";    hintNew.style.background="black"; hintNew.style.padding="5px";
+    hintNew.textContent = "Hint: " + secret.hint;
+    document.body.insertBefore(hintNew, board);
+    updateCategoryHintSize();
+
+    for(let r=0;r<6;r++){
+        const row = document.createElement("div");
+        row.className="row";
+        for(let c=0;c<5;c++){
+            const tile = document.createElement("div");
+            tile.className="tile";
+            row.appendChild(tile);
+        }
+        board.appendChild(row);
+    }
+
+    currentRow=0;
+    currentGuess="";
+    timeLeft=80;
+    levelCompleted=false;
+    startTimer();
+}
+window.addEventListener("resize", updateCategoryHintSize);
+
+function startTimer(){
+    clearInterval(timer);
+    timerText.innerText = timeLeft;
+    timer = setInterval(()=>{
+        if(!isPaused && !levelCompleted){
+            timeLeft--;
+            timerText.innerText = timeLeft;
+            if(timeLeft <= 0){
+                clearInterval(timer);
+                levelCompleted = true;
+                showResult("YOU LOSE", secretWord);
+            }
+        }
+    }, 1000);
+}
+
+function updateCategoryHintSize() {
+    const width = window.innerWidth;
+
+    const category = document.getElementById("category");
+    const hint = document.getElementById("hint");
+
+    if (!category || !hint) return;
+
+    if (width > 1024) {       
+        category.style.fontSize = "18px";
+        hint.style.fontSize = "16px";
+        category.style.margin = "10px 0";
+        hint.style.margin = "8px 0";
+    } else if (width <= 1024 && width > 768) {  
+        category.style.fontSize = "16px";
+        hint.style.fontSize = "14px";
+        category.style.margin = "8px 0";
+        hint.style.margin = "6px 0";
+    } else if (width <= 768 && width > 480) {   
+        category.style.fontSize = "14px";
+        hint.style.fontSize = "12px";
+        category.style.margin = "6px 0";
+        hint.style.margin = "4px 0";
+    } else {                                      
+        category.style.fontSize = "11px";
+        hint.style.fontSize = "9px";
+        category.style.margin = "4px 0";
+        hint.style.margin = "2px 0";
+    }
+}
+
+function updateTiles(){
+    const row = board.children[currentRow];
+    for(let i=0; i<5; i++){
+        row.children[i].textContent = currentGuess[i] || "";
+    }
+}
+
+let currentPlayer = 1;
+
+let player1Score = 0;
+let player2Score = 0;
+
+let player1Time = 0;
+let player2Time = 0;
+
+let correctWordsCount = 0;
+
+function checkWord(){
+    const row = board.children[currentRow];
+    for(let i=0; i<5; i++){
+        const tile = row.children[i];
+        const letter = currentGuess[i];
+        if(letter === secretWord[i]){
+            tile.classList.add("green");
+        } else if(secretWord.includes(letter)){
+            tile.classList.add("yellow");
+        } else {
+            tile.classList.add("gray");
+        }
+    }
+
+    if(currentGuess === secretWord){
+        levelCompleted = true;
+        clearInterval(timer);
+        correctWordsCount++; 
+
+        if(level < maxLevel){
+            nextBtn.style.display = "block"; 
+        } else {
+            showResult("YOU WIN", secretWord, true); 
+        }
+        return;
+    }
+
+    currentRow++;
+    currentGuess="";
+    if(currentRow === 6){
+        levelCompleted = true;
+        clearInterval(timer);
+        showResult("YOU LOSE", secretWord, false); 
+    }
+}
+
+nextBtn.onclick = ()=>{
+    if(level >= maxLevel){
+        nextBtn.style.display="none";
+        showResult("YOU WIN", correctWordsCount, true); 
+        return;
+    }
+    level++;
+    levelText.innerText = level;
+    nextBtn.style.display="none";
+    levelCompleted = false;
+    resetBoard();
+    startGame();
+};
+
+
+function showResult(text, secret, isWin){
+
+if(mode === "2"){
+
+    let endTime = Date.now();
+    let timePlayed = Math.floor((endTime - startTime - pausedTimeAccum) / 1000);
+
+
+    if(currentPlayer === 1){
+
+        player1Score = correctWordsCount;
+        player1Time = timePlayed;
+
+        showPlayerTransition();
+        return;
+    }
+
+    if(currentPlayer === 2){
+
+        player2Score = correctWordsCount;
+        player2Time = timePlayed;
+
+        let winnerText = "";
+
+        if(player1Score > player2Score){
+            winnerText = "PLAYER 1 WINS";
+        }
+        else if(player2Score > player1Score){
+            winnerText = "PLAYER 2 WINS";
+        }
+        else{
+
+         
+            if(player1Time < player2Time){
+                winnerText = "PLAYER 1 WINS (FASTER)";
+            }
+            else if(player2Time < player1Time){
+                winnerText = "PLAYER 2 WINS (FASTER)";
+            }
+            else{
+                winnerText = "DRAW";
+            }
+        }
+
+        resultTitle.innerText = winnerText;
+
+        finalWord.previousSibling.textContent = "RESULT:";
+        finalWord.innerHTML =
+        `
+        P1 SCORE: ${player1Score}<br>
+        P1 TIME: ${player1Time}s<br><br>
+
+        P2 SCORE: ${player2Score}<br>
+        P2 TIME: ${player2Time}s
+        `;
+
+        resultOverlay.style.display = "flex";
+
+        return;
+    }
+}
+    resultTitle.innerText = text;
+
+    let endTime = Date.now();
+    let timePlayed = Math.floor((endTime - startTime - pausedTimeAccum) / 1000); 
+
+    saveScore("Wordle", level, correctWordsCount, timePlayed);
+
+    finalWord.previousSibling.textContent = "SECRET WORD:";
+    finalWord.innerText = secret;
+
+    if(isWin){
+        resultPanel.style.background = "url('WinBackground.png') center/contain no-repeat";
+        leftDecor.src = "WinGIF.gif";
+        rightDecor.src = "WinGIF.gif";
+
+        if(loseMusic && !loseMusic.paused){
+            loseMusic.pause();
+            loseMusic.currentTime = 0;
+        }
+        if(winMusic){
+            winMusic.currentTime = 0;
+            winMusic.play().catch(err => console.log("Could not play music:", err));
+        }   
+    } else {
+        resultPanel.style.background = "url('LoseBackground.png') center/contain no-repeat";
+        leftDecor.src = "LoseGIF.gif";
+        rightDecor.src = "LoseGIF.gif";
+
+        if(winMusic && !winMusic.paused){
+            winMusic.pause();
+            winMusic.currentTime = 0;
+        }
+        if(loseMusic){
+            loseMusic.currentTime = 0;
+            loseMusic.play().catch(err => console.log(err));
+        }
+    }
+
+    leftDecor.style.display = "block";
+    rightDecor.style.display = "block";
+    resultOverlay.style.display = "flex";
+}   
+
+function resetBoard(){
+    board.innerHTML = "";
+    const catDiv = document.getElementById("category");
+    if(catDiv) catDiv.remove();
+    const hintDiv = document.getElementById("hint");
+    if(hintDiv) hintDiv.remove();
+    resultOverlay.style.display = "none";
+    currentRow = 0;
+    currentGuess = "";
+}
+
+
+resultRestart.onclick = ()=> location.reload();
+resultHome.onclick = ()=> window.location.href="Tournament.html";
+resultSettings.onclick = ()=> window.location.href="AboutUs.html";
+
+function applySettings() {
+    const soundEnabled = localStorage.getItem('sound') !== 'off';
+    const musicEnabled = localStorage.getItem('music') !== 'off';
+
+    document.querySelectorAll('.sound').forEach(a => a.muted = !soundEnabled);
+    document.querySelectorAll('.music').forEach(m => m.muted = !musicEnabled);
+}
+
+applySettings();
+
+function saveScore(gameName, level, score, timePlayed=0){
+
+    const formData = new FormData();
+
+    formData.append('fname', document.getElementById("fname").value);
+    formData.append('lname', document.getElementById("lname").value);
+    formData.append('number', document.getElementById("number").value);
+    formData.append('type', document.getElementById("type").value);
+    formData.append('grade', document.getElementById("grade").value);
+    formData.append('strand', document.getElementById("strand").value);
+
+
+    formData.append('game', gameName);
+    formData.append('level', level);
+    formData.append('score', score);
+    formData.append('time_played', timePlayed);
+    formData.append('mode', mode);
+
+
+    if(mode === "2"){
+
+        formData.append('fname2', document.getElementById("fname2").value);
+        formData.append('lname2', document.getElementById("lname2").value);
+        formData.append('number2', document.getElementById("number2").value);
+        formData.append('type2', document.getElementById("type2").value);
+        formData.append('grade2', document.getElementById("grade2").value);
+        formData.append('strand2', document.getElementById("strand2").value);
+
+        formData.append('score2', player2Score);
+        formData.append('time2', player2Time);
+    }
+
+    fetch('save_score.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.text())
+    .then(res => console.log(res))
+    .catch(err => console.log(err));
+}
+
+let inputLocked = false;
+const mobileInput = document.getElementById("mobileInput");
+
+board.addEventListener("click", () => {
+    mobileInput.focus();
+});
+
+mobileInput.addEventListener("input", () => {
+
+    if (inputLocked) return; 
+
+    let value = mobileInput.value.toUpperCase().replace(/[^A-Z]/g, "");
+
+    currentGuess = value.slice(0, 5);
+    mobileInput.value = currentGuess;
+
+    updateTiles();
+
+    if (currentGuess.length === 5) {
+
+        inputLocked = true; 
+
+        setTimeout(() => {
+            checkWord();
+            mobileInput.value = "";
+            currentGuess = "";
+            inputLocked = false; 
+        }, 200);
+    }
+});
+function showPlayerTransition(){
+
+    turnOverlay.style.display = "flex";
+
+    let countdown = 5;
+    turnTitle.innerText = "PLAYER 2 TURN";
+    turnCountdown.innerText = countdown;
+
+    const interval = setInterval(() => {
+
+        countdown--;
+        turnCountdown.innerText = countdown;
+
+        if(countdown <= 0){
+            clearInterval(interval);
+            turnOverlay.style.display = "none";
+
+            currentPlayer = 2;
+            playerTurnText.innerText = "2";
+
+            level = 1;
+            correctWordsCount = 0;
+
+            resetBoard();
+
+            startTime = Date.now();
+            pausedTimeAccum = 0;
+
+            startGame();
+        }
+
+    }, 1000);
+}
+</script>
+
+</body>
+</html>

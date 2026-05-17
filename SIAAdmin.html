@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard - Skill Issue Arcade</title>
+
+  <link rel="icon" type="image/png" href="Logo.png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      display: flex;
+      height: 100vh;
+      background: #f4f6f9;
+      color: #1f2937;
+    }
+
+    .sidebar {
+      width: 260px;
+      background: #ffffff;
+      border-right: 1px solid #e5e7eb;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .logo {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: #111827;
+    }
+
+    .menu-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .group-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: #9ca3af;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .menu button {
+      width: 100%;
+      display: block;
+      padding: 12px 12px;
+      border: none;
+      background: transparent;
+      text-align: left;
+      font-size: 13px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.2s;
+      color: #374151;
+    }
+
+    .menu button:hover {
+      background: #f3f4f6;
+    }
+
+    .menu button.active {
+      background: #111827;
+      color: #ffffff;
+    }
+
+    .main {
+      flex: 1;
+      padding: 30px;
+      overflow-y: auto;
+    }
+
+    .header h1 {
+      font-size: 22px;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #ffffff;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid #e5e7eb;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: left;
+      font-size: 14px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    th {
+      background: #f9fafb;
+    }
+
+    .status-paid { color: #16a34a; font-weight: 600; }
+    .status-pending { color: #f59e0b; font-weight: 600; }
+    .status-declined { color: #dc2626; font-weight: 600; }
+
+    .btn {
+      padding: 6px 10px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      margin-right: 5px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-left: 20px;
+    }
+
+    .logo img {
+      width: 26px;
+      height: 24px;
+    }
+
+    .btn-delete {
+      background: #6b7280;
+      color: white;
+    }
+
+    .btn-accept { background: #16a34a; color: white; }
+    .btn-decline { background: #dc2626; color: white; }
+
+  </style>
+</head>
+<body>
+
+  <div class="sidebar">
+    <div class="logo">
+  <img src="logo.png" alt="logo">
+  Admin Panel
+</div>
+
+    <div class="menu-group">
+      <div class="group-title">General</div>
+      <div class="menu">
+        <button class="active" onclick="showSection('dashboard')">Dashboard</button>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <div class="group-title">Normal System</div>
+      <div class="menu">
+        <button onclick="showSection('players')">Players</button>
+        <button onclick="showSection('leaderboard')">Leaderboard</button>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <div class="group-title">Tournament System</div>
+      <div class="menu">
+        <button onclick="showSection('tournamentPlayers')">Tournament Players</button>
+        <button onclick="showSection('tournamentLeaderboard')">Tournament Leaderboard</button>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <div class="group-title">Finance</div>
+      <div class="menu">
+        <button onclick="showSection('payments')">Payments</button>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <div class="group-title">System</div>
+      <div class="menu">
+        <button onclick="showSection('games')">Games</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="main">
+
+    <div class="header">
+      <h1 id="sectionTitle">Dashboard</h1>
+    </div>
+
+    <div id="dashboard" class="section">
+      <p>Dashboard content...</p>
+    </div>
+
+    <div id="players" class="section" style="display:none;"><p>Normal players content...</p></div>
+
+    <div id="leaderboard" class="section" style="display:none;"><p>Normal leaderboard content...</p></div>
+
+    <div id="tournamentPlayers" class="section" style="display:none;"><p>Tournament players content...</p></div>
+
+    <div id="tournamentLeaderboard" class="section" style="display:none;"><p>Tournament leaderboard content...</p></div>
+
+    <div id="payments" class="section" style="display:none;">
+      <table>
+        <tr>
+          <th>Unique ID</th>
+          <th>Method</th>
+          <th>Amount</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+
+        <tbody id="paymentTable"></tbody>
+
+      </table>
+    </div>
+
+    <div id="games" class="section" style="display:none;"><p>Games management coming soon...</p></div>
+
+  </div>
+
+  <script>
+
+    function loadPayments() {
+
+    let data = JSON.parse(localStorage.getItem("paymentData"));
+
+    if (!data) return;
+
+    let table = document.getElementById("paymentTable");
+
+    table.innerHTML = `
+    
+    <tr>
+        <td>${data.id}</td>
+        <td>${data.method}</td>
+        <td>${data.amount}</td>
+
+        <td id="payment-status" class="status-pending">
+            ${data.status}
+        </td>
+
+        <td>
+            <button class="btn btn-accept" onclick="approvePayment()">
+                Accept
+            </button>
+
+            <button class="btn btn-decline" onclick="declinePayment()">
+                Decline
+            </button>
+            <button class="btn btn-delete" onclick="deletePayment()">
+                Delete
+            </button>
+        </td>
+    </tr>
+
+    `;
+}
+
+loadPayments();
+
+    function showSection(id) {
+      document.querySelectorAll('.section').forEach(sec => sec.style.display = 'none');
+      document.getElementById(id).style.display = 'block';
+      document.getElementById('sectionTitle').innerText = id;
+      document.querySelectorAll('.menu button').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+
+    function approvePayment() {
+
+    localStorage.setItem("payment_p2", "approved");
+
+    document.getElementById("payment-status").innerText = "Paid";
+
+    document.getElementById("payment-status").className = "status-paid";
+}
+
+function declinePayment() {
+
+    localStorage.setItem("payment_p2", "declined");
+
+    document.getElementById("payment-status").innerText = "Declined";
+
+    document.getElementById("payment-status").className = "status-declined";
+}
+
+function deletePayment() {
+
+    localStorage.removeItem("paymentData");
+
+    localStorage.removeItem("payment_p2");
+
+    document.getElementById("paymentTable").innerHTML = "";
+}
+
+  </script>
+
+</body>
+</html>
