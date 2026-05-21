@@ -1,0 +1,6 @@
+
+
+MIGZ 5/21/2026
+
+    - Snake game (Tournament) does not send data to database
+    - Wordle send the data `1` in mode property in leaderboard table -- DONE

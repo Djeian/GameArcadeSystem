@@ -709,7 +709,7 @@ if(mode === "2"){
         player2Score = correctWordsCount;
         player2Time = timePlayed;
         saveScore(
-            "Wordle Tournament",
+            "Wordle",
             level,
             player1Score,
             player1Time,
@@ -841,8 +841,8 @@ function saveScore(gameName, level, score, timePlayed=0, score2=0, time2=0){
     formData.append('level', level);
     formData.append('score', score);
     formData.append('time_played', timePlayed);
-    formData.append('mode', mode);
-
+    formData.append('mode', "tournament");
+    console.log("Mode " + mode);
 
     if(mode === "2"){
 
