@@ -2,7 +2,7 @@
 
     $host = "localhost";
     $user = "root";
-    $password = "";
+    $password = "yourpassword123";
     $database = "arcadesystem";
 
     $conn = new mysqli($host, $user, $password, $database);

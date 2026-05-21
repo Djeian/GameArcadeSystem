@@ -412,7 +412,7 @@ function showResult(text){
         console.log("Could not play music:", err);
         });
         }
-        saveScore("MemoryGame", level, matches, timePlayed); 
+        saveScore("Memory", level, matches, timePlayed); 
 
     } else {
         resultPanel.style.background = "url('LoseBackground.png') center/contain no-repeat";
@@ -426,7 +426,7 @@ function showResult(text){
             loseMusic.currentTime = 0;
             loseMusic.play().catch(err => console.log(err));
         }
-        saveScore("MemoryGame", level, 0, timePlayed);
+        saveScore("Memory", level, 0, timePlayed);
 
     }
     leftDecor.style.display = "block";

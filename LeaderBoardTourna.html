@@ -130,7 +130,7 @@ tr{
 <h1>TOURNAMENT LEADERBOARD</h1>
 <button id="backBtn" onclick="window.location.href='Home.html'">BACK</button>
 <div id="gameButtons" style="margin-bottom: 10px;">
-    <button class="gameBtn" data-game="MemoryGame">MemoryGame</button>
+    <button class="gameBtn" data-game="Memory">MemoryGame</button>
     <button class="gameBtn" data-game="Wordle">Wordle</button>
     <button class="gameBtn" data-game="Snake">SnakeGame</button>
 </div>
@@ -158,7 +158,7 @@ tr{
 </div>
 <script>
 const gameButtons = document.querySelectorAll(".gameBtn");
-let currentGame = "MemoryGame";
+let currentGame = "Memory";
 
 gameButtons.forEach(btn => {
     btn.onclick = () => {
@@ -181,20 +181,24 @@ function loadLeaderboard(game = currentGame) {
             return;
         }
 
-        
-        const filtered = data.filter(row => row.game === game);
+        const filtered = data.filter(row => row.game === game); 
 
         filtered.sort((a, b) => {
-    const aHasNumber = a.number && a.number.trim() !== "";
-    const bHasNumber = b.number && b.number.trim() !== "";
-    if(aHasNumber !== bHasNumber){
-        return aHasNumber ? -1 : 1;
-    }
+            const aHasNumber = a.number && a.number.trim() !== "";
+            const bHasNumber = b.number && b.number.trim() !== "";
+            if(aHasNumber !== bHasNumber){
+                return aHasNumber ? -1 : 1;
+            }
 
-    if(b.score !== a.score) return b.score - a.score;
+            if(b.score !== a.score) return b.score - a.score;
 
-    return (a.time_played || 9999) - (b.time_played || 9999);
-});
+
+            return (a.time_played || 9999) - (b.time_played || 9999);
+        });
+
+        console.log("Game " + data.map(r => r.game));
+        console.log(game);
+
 
         leaderboardBody.innerHTML = "";
         filtered.forEach((row, index)=>{
