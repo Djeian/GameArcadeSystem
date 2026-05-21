@@ -1376,12 +1376,21 @@ function endLevel(win, customMessage){
         leftDecor.src = "WinGIF.gif";
         rightDecor.src = "WinGIF.gif";
 
+        saveTournamentPlayer(
+            1,
+            playerResults.player1.score
+        );
     } else {
 
         showResult("YOU LOSE", customMessage || "Game Over");
 
         leftDecor.src = "LoseGIF.gif";
         rightDecor.src = "LoseGIF.gif";
+
+        saveTournamentPlayer(
+            1,
+            playerResults.player1.score
+        );
     }
 
     leftDecor.style.display = "block";
@@ -1541,6 +1550,7 @@ applySettings();
 function saveTournamentPlayer(playerNumber, score){
 
     let fname, lname, number, type, grade, strand;
+    console.log("player number " + playerNumber);
 
     if(playerNumber === 1){
 
@@ -1573,7 +1583,7 @@ function saveTournamentPlayer(playerNumber, score){
     formData.append("grade", grade);
     formData.append("strand", strand);
 
-    formData.append("game", "Snake Tournament");
+    formData.append("game", "Snake");
 
     formData.append("level", level);
 
