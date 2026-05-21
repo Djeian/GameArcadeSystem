@@ -127,7 +127,7 @@ tr{
 </head>
 <body>
 
-<h1>LEADERBOARD</h1>
+<h1>TOURNAMENT LEADERBOARD</h1>
 <button id="backBtn" onclick="window.location.href='Home.html'">BACK</button>
 <div id="gameButtons" style="margin-bottom: 10px;">
     <button class="gameBtn" data-game="MemoryGame">MemoryGame</button>
@@ -173,7 +173,7 @@ gameButtons.forEach(btn => {
 function loadLeaderboard(game = currentGame) {
     leaderboardBody.innerHTML = '<tr><td colspan="9">Loading...</td></tr>';
     
-    fetch('get_scores.php?mode=normal')
+    fetch('get_scores.php?mode=tournament')
     .then(res => res.json())
     .then(data => {
         if(!data || data.length === 0){

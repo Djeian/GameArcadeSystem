@@ -1,12 +1,14 @@
-<?php
-$host = "localhost";      
-$user = "root";           
-$pass = "";                
-$dbname = "arcadesystem";  
+    <?php
 
-$conn = new mysqli($host, $user, $pass, $dbname);
+    $host = "localhost";
+    $user = "root";
+    $password = "";
+    $database = "arcadesystem";
 
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-?>
+    $conn = new mysqli($host, $user, $password, $database);
+
+    if($conn->connect_error){
+        die("Connection failed");
+    }
+
+    ?>

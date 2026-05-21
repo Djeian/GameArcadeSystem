@@ -1347,6 +1347,16 @@ function endLevel(win, customMessage){
 
         }
 
+        saveTournamentPlayer(
+            1,
+            playerResults.player1.score
+        );
+
+        saveTournamentPlayer(
+            2,
+            playerResults.player2.score
+        );
+
         showResult(
             winnerText,
             `P1 SCORE: ${p1} | P2 SCORE: ${p2}`
@@ -1528,32 +1538,57 @@ function applySettings() {
 
 applySettings();
 
-function saveScore(gameName, level, score, timePlayed=0){
-    const fname = document.getElementById("fname").value;
-    const lname = document.getElementById("lname").value;
-    const number = document.getElementById("number").value;
-    const type = document.getElementById("type").value;
-    const grade = document.getElementById("grade").value;
-    const strand = document.getElementById("strand").value;
+function saveTournamentPlayer(playerNumber, score){
+
+    let fname, lname, number, type, grade, strand;
+
+    if(playerNumber === 1){
+
+        fname = document.getElementById("fname").value;
+        lname = document.getElementById("lname").value;
+        number = document.getElementById("number").value;
+        type = document.getElementById("type").value;
+        grade = document.getElementById("grade").value;
+        strand = document.getElementById("strand").value;
+
+    } else {
+
+        fname = document.getElementById("fname2").value;
+        lname = document.getElementById("lname2").value;
+        number = document.getElementById("number2").value;
+        type = document.getElementById("type2").value;
+        grade = document.getElementById("grade2").value;
+        strand = document.getElementById("strand2").value;
+    }
 
     const formData = new FormData();
-    formData.append('fname', fname);
-    formData.append('lname', lname);
-    formData.append('number', number);
-    formData.append('type', type);
-    formData.append('grade', grade);
-    formData.append('strand', strand);
-    formData.append('game', gameName);
-    formData.append('level', level);
-    formData.append('score', score);
-    formData.append('time_played', timePlayed);
 
-    fetch('save_score.php', {
-        method: 'POST',
+    formData.append("mode", "tournament");
+
+    formData.append("fname", fname);
+    formData.append("lname", lname);
+    formData.append("number", number);
+
+    formData.append("type", type);
+    formData.append("grade", grade);
+    formData.append("strand", strand);
+
+    formData.append("game", "Snake Tournament");
+
+    formData.append("level", level);
+
+    formData.append("score", score);
+
+    formData.append("time_played", 60 - timeLeft);
+
+    formData.append("player_number", playerNumber);
+
+    fetch("save_score.php", {
+        method: "POST",
         body: formData
     })
     .then(res => res.text())
-    .then(res => console.log(res))
+    .then(data => console.log(data))
     .catch(err => console.log(err));
 }
 </script>

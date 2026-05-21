@@ -708,6 +708,14 @@ if(mode === "2"){
 
         player2Score = correctWordsCount;
         player2Time = timePlayed;
+        saveScore(
+            "Wordle Tournament",
+            level,
+            player1Score,
+            player1Time,
+            player2Score,
+            player2Time
+        );
 
         let winnerText = "";
 
@@ -817,7 +825,7 @@ function applySettings() {
 
 applySettings();
 
-function saveScore(gameName, level, score, timePlayed=0){
+function saveScore(gameName, level, score, timePlayed=0, score2=0, time2=0){
 
     const formData = new FormData();
 
@@ -845,8 +853,8 @@ function saveScore(gameName, level, score, timePlayed=0){
         formData.append('grade2', document.getElementById("grade2").value);
         formData.append('strand2', document.getElementById("strand2").value);
 
-        formData.append('score2', player2Score);
-        formData.append('time2', player2Time);
+        formData.append('score2', score2);
+        formData.append('time2', time2);
     }
 
     fetch('save_score.php', {

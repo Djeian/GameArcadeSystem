@@ -12,8 +12,10 @@ $game = $_POST['game'] ?? '';
 $level = (int)($_POST['level'] ?? 0);
 $score = (int)($_POST['score'] ?? 0);
 $time_played = (int)($_POST['time_played'] ?? 0);
+$score2 = $_POST['score2'] ?? 0;
+$time2 = $_POST['time2'] ?? 0;
 
-$mode = $_POST['mode'] ?? 'normal';
+$mode = $_POST['mode'] ?? 'tournament';
 $player_number = (int)($_POST['player_number'] ?? 1);
 
 $sql = "INSERT INTO leaderboard
@@ -42,8 +44,8 @@ $player_number
 );
 
 if($stmt->execute()){
-    echo "success";
+    echo "Tournament Score Saved";
 }else{
-    echo "error";
+    echo "Error: " . $stmt->error;
 }
 ?>
